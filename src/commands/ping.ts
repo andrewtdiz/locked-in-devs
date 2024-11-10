@@ -4,7 +4,7 @@ import { CommandInteraction } from "discord.js";
 export const pingCommand = {
   data: new SlashCommandBuilder()
     .setName("ping")
-    .setDescription("Replies with Pong!"),
+    .setDescription("Replies with Pong! (v1.0)"),
   async execute(interaction: CommandInteraction) {
     await interaction.reply("Pong!");
   },
