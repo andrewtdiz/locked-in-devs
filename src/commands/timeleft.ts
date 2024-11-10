@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction, GuildMember, Message } from "discord.js";
 import { getRemainingTime } from "../utils/LockinTimer";
 
-export const command = {
+export const timeLeftCommand = {
   data: new SlashCommandBuilder()
     .setName("timeleft")
     .setDescription("Check how much time is left for a user to be unmuted.")
@@ -38,11 +38,11 @@ export const command = {
     const endTime = Math.floor((Date.now() + remainingTime) / 1000);
 
     // Send the reply with the relative timestamp
-    const reply = await interaction.reply({
+    const reply = (await interaction.reply({
       content: `${guildMember.user.tag} will be unmuted <t:${endTime}:R>.`,
       ephemeral: true,
       fetchReply: true,
-    }) as Message;
+    })) as Message;
 
     setTimeout(() => {
       reply.delete().catch(console.error);

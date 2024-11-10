@@ -5,7 +5,7 @@ import { cancelTimer } from "../utils/LockinTimer";
 import { removeRoles } from "../utils/RemoveRoles";
 import { unlockEmbed } from "../embeds/UnlockEmbed";
 
-export const command = {
+export const unlockCommand = {
   data: new SlashCommandBuilder()
     .setName("unlock")
     .setDescription("Unlock a user")

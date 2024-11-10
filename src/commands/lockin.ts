@@ -4,7 +4,7 @@ import { Config } from "../config";
 import { startTimer } from "../utils/LockinTimer";
 import { createYapperEmbed } from "../embeds/YapperEmbed";
 
-export const command = {
+export const lockInCommand = {
   data: new SlashCommandBuilder()
     .setName("yapper")
     .setDescription("Label a user as Yapping")
