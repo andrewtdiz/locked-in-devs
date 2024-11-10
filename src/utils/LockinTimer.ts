@@ -7,8 +7,6 @@ const streamingTimeouts: { [userId: string]: NodeJS.Timer } = {};
 const timerStartTimes: { [userId: string]: number } = {};
 
 export const startTimer = (userId: string, member: GuildMember): void => {
-  // console.log(`Starting timer for user ${userId}`);
-  
   const now = Date.now();
   timerStartTimes[userId] = now;
 
