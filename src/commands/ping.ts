@@ -14,6 +14,8 @@ export const pingCommand = {
     const latency = sent.createdTimestamp - interaction.createdTimestamp;
     const apiLatency = Math.round(interaction.client.ws.ping);
 
-    return `Latency: **${latency}ms**\nAPI Latency: **${apiLatency}ms**\n*v1.06*`;
+    await interaction.editReply({
+      content: `Latency: **${latency}ms**\nAPI Latency: **${apiLatency}ms**\n*v1.07*`,
+    });
   },
 };
