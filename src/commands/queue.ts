@@ -15,18 +15,16 @@ const queueCommand = {
     await interaction.deferReply();
     const bot = await getBot(interaction);
     if (!bot) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "No bots available",
-        ephemeral: true,
       });
     }
 
     const result = await sendToBot(interaction, bot, "queue");
 
     if (!result) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to send to bot",
-        ephemeral: true,
       });
     }
 

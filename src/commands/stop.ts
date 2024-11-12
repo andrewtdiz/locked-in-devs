@@ -17,9 +17,8 @@ const stopCommand = {
 
     const bot = await getBot(interaction);
     if (!bot || !guild) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "No bots available",
-        ephemeral: true,
       });
     }
 
@@ -28,9 +27,8 @@ const stopCommand = {
     const result = await sendToBot(interaction, bot, "stop", { guildId });
 
     if (!result) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to send to bot",
-        ephemeral: true,
       });
     }
 
