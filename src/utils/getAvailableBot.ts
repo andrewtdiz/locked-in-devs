@@ -12,7 +12,7 @@ export function getAvailableBot(
     if (!bot) continue;
 
     const botVoiceState = bot.voice;
-    if (!botVoiceState) {
+    if (!botVoiceState || !botVoiceState.channel) {
       return botClientId;
     }
   }
