@@ -25,9 +25,8 @@ const playCommand = {
 
     const bot = getBot(interaction);
     if (!bot) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "No bots available",
-        ephemeral: true,
       });
     }
 
@@ -36,9 +35,8 @@ const playCommand = {
 
     if (!member || !("voice" in member) || !member.voice.channel || !guild) {
       console.log("Invalid member.");
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to Play. You are not in voice channel!",
-        ephemeral: true,
       });
     }
 
@@ -53,9 +51,8 @@ const playCommand = {
     console.log(result);
 
     if (!result) {
-      return interaction.reply({
+      return interaction.editReply({
         content: "Failed to send to bot",
-        ephemeral: true,
       });
     }
 
