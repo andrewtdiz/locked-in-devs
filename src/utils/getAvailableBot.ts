@@ -15,7 +15,7 @@ export async function getAvailableBot(
         channel.members.has(botClientId)
     );
     console.log(botClientId, botIsInSomeVC);
-    if (botIsInSomeVC) {
+    if (!botIsInSomeVC) {
       return botClientId;
     }
   }
