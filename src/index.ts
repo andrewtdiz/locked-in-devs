@@ -19,6 +19,7 @@ import resumeCommand from "./commands/resume";
 import queueCommand from "./commands/queue";
 import stopCommand from "./commands/stop";
 import skipCommand from "./commands/skip";
+import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
 import { isInChannel } from "./utils/isInChannel";
 
@@ -32,6 +33,7 @@ const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
   playCommand,
+  loopCommand,
   queueCommand,
   resumeCommand,
   skipCommand,

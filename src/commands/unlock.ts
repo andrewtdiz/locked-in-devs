@@ -1,5 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
+import {
+  CommandInteraction,
+  GuildMember,
+  PermissionsBitField,
+} from "discord.js";
 import { Config } from "../config";
 import { cancelTimer } from "../utils/LockinTimer";
 import { removeRoles } from "../utils/RemoveRoles";
@@ -16,6 +20,15 @@ export const unlockCommand = {
         .setRequired(true)
     ),
   async execute(interaction: CommandInteraction) {
+    if (
+      !interaction.memberPermissions?.has(PermissionsBitField.Flags.BanMembers)
+    ) {
+      return interaction.reply({
+        content: "You do not have permission to use this command.",
+        ephemeral: true,
+      });
+    }
+
     const userOption = interaction.options.get("user", true)?.user;
     const memberId = userOption?.id ?? null;
 
