@@ -13,15 +13,19 @@ const stopCommand = {
 
   async execute(interaction: CommandInteraction<CacheType>) {
     await interaction.deferReply();
+    const guild = interaction.guild;
+
     const bot = await getBot(interaction);
-    if (!bot) {
+    if (!bot || !guild) {
       return interaction.reply({
         content: "No bots available",
         ephemeral: true,
       });
     }
 
-    const result = await sendToBot(interaction, bot, "stop");
+    const guildId = guild.id;
+
+    const result = await sendToBot(interaction, bot, "stop", { guildId });
 
     if (!result) {
       return interaction.reply({

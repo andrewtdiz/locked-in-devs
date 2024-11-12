@@ -22,6 +22,8 @@ export async function sendToBot(
 
   console.log("POSTING");
 
+  const startTime = Date.now();
+
   const result = await fetch(`http://localhost:${BOT_PORT[botId]}/`, {
     method: "POST",
     headers: {
@@ -36,6 +38,8 @@ export async function sendToBot(
     return null;
   }
   const body = await result.json();
+
+  console.log(`Request took ${Date.now() - startTime}ms`);
 
   return body?.result || null;
 }
