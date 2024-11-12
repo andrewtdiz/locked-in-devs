@@ -30,7 +30,23 @@ const playCommand = {
       });
     }
 
-    const result = await sendToBot(interaction, bot, "play", { query });
+    const member = interaction.member;
+    const guild = interaction.guild;
+
+    if (!member || !("voice" in member) || !member.voice.channel || !guild) {
+      console.log("Invalid member.");
+      return interaction.reply({
+        content: "Failed to Play. You are not in voice channel!",
+        ephemeral: true,
+      });
+    }
+
+    const voiceChannelId = member.voice.channel.id;
+
+    const result = await sendToBot(interaction, bot, "play", {
+      query,
+      voiceChannelId,
+    });
 
     if (!result) {
       return interaction.reply({
