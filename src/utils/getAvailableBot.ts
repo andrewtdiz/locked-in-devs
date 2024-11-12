@@ -9,9 +9,11 @@ export function getAvailableBot(
 
   for (const botClientId of botclients) {
     const bot = guild.members.cache.get(botClientId);
+    console.log(bot);
     if (!bot) continue;
 
     const botVoiceState = bot.voice;
+    console.log(botVoiceState, botVoiceState.channel);
     if (!botVoiceState || !botVoiceState.channel) {
       return botClientId;
     }
