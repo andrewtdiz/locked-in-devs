@@ -8,9 +8,6 @@ export function getBotInSameChannel(
   const guild = interaction.guild;
   if (!guild) return null;
 
-  const connection = getVoiceConnection(guild.id);
-  if (!connection) return null;
-
   const userChannelId = interaction.channelId;
   const member = interaction.member;
   if (!userChannelId) return null;
