@@ -18,6 +18,7 @@ const playCommand = {
     ),
 
   async execute(interaction: CommandInteraction<CacheType>) {
+    await interaction.deferReply();
     if (!interaction.isCommand()) return;
 
     const query = interaction.options.get("query")?.value as string;
@@ -43,10 +44,13 @@ const playCommand = {
 
     const voiceChannelId = member.voice.channel.id;
 
+    console.log(member, guild, voiceChannelId);
+
     const result = await sendToBot(interaction, bot, "play", {
       query,
       voiceChannelId,
     });
+    console.log(result);
 
     if (!result) {
       return interaction.reply({
