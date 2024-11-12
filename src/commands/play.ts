@@ -22,7 +22,7 @@ const playCommand = {
     if (!interaction.isCommand()) return;
 
     const query = interaction.options.get("query")?.value as string;
-    await interaction.deferReply();
+
     const bot = getBot(interaction);
     if (!bot) {
       return interaction.reply({
