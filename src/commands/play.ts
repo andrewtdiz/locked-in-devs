@@ -9,11 +9,17 @@ import { sendToBot } from "../utils/sendToBot";
 const playCommand = {
   data: new SlashCommandBuilder()
     .setName("play")
-    .setDescription("Search for a song on YouTube and play it"),
+    .setDescription("Search for a song on YouTube and play it")
+    .addStringOption((option) =>
+      option
+        .setName("query")
+        .setDescription("The search query to find the song")
+        .setRequired(true)
+    ),
 
   async execute(interaction: CommandInteraction<CacheType>) {
     if (!interaction.isCommand()) return;
-    
+
     const query = interaction.options.get("query")?.value as string;
     await interaction.deferReply();
     const bot = getBot(interaction);
@@ -32,7 +38,7 @@ const playCommand = {
         ephemeral: true,
       });
     }
-    
+
     await interaction.editReply(result);
   },
 };
