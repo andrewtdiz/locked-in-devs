@@ -13,7 +13,7 @@ const skipCommand = {
 
   async execute(interaction: CommandInteraction<CacheType>) {
     await interaction.deferReply();
-    const bot = getBot(interaction);
+    const bot = await getBot(interaction);
     if (!bot) {
       return interaction.reply({
         content: "No bots available",
@@ -29,7 +29,7 @@ const skipCommand = {
         ephemeral: true,
       });
     }
-    
+
     await interaction.editReply(result);
   },
 };

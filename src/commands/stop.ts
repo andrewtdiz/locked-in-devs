@@ -13,14 +13,14 @@ const stopCommand = {
 
   async execute(interaction: CommandInteraction<CacheType>) {
     await interaction.deferReply();
-    const bot = getBot(interaction);
+    const bot = await getBot(interaction);
     if (!bot) {
       return interaction.reply({
         content: "No bots available",
         ephemeral: true,
       });
     }
-    
+
     const result = await sendToBot(interaction, bot, "stop");
 
     if (!result) {
@@ -29,7 +29,7 @@ const stopCommand = {
         ephemeral: true,
       });
     }
-    
+
     await interaction.editReply(result);
   },
 };

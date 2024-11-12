@@ -23,7 +23,7 @@ const playCommand = {
 
     const query = interaction.options.get("query")?.value as string;
 
-    const bot = getBot(interaction);
+    const bot = await getBot(interaction);
     console.log(bot);
     if (!bot) {
       return interaction.editReply({

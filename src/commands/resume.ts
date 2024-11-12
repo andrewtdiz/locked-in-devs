@@ -9,7 +9,7 @@ export default {
 
   async execute(interaction: CommandInteraction) {
     await interaction.deferReply();
-    const bot = getBot(interaction);
+    const bot = await getBot(interaction);
     if (!bot) {
       return interaction.reply({
         content: "No bots available",
@@ -25,7 +25,7 @@ export default {
         ephemeral: true,
       });
     }
-    
+
     await interaction.editReply(result);
   },
 };
