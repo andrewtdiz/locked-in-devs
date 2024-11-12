@@ -41,12 +41,14 @@ const playCommand = {
     }
 
     const voiceChannelId = member.voice.channel.id;
+    const guildId = guild.id;
 
-    console.log(voiceChannelId);
+    console.log(voiceChannelId, guildId);
 
     const result = await sendToBot(interaction, bot, "play", {
       query,
       voiceChannelId,
+      guildId,
     });
     console.log(result);
 
