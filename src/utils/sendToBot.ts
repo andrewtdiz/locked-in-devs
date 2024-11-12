@@ -5,8 +5,8 @@ import type { MusicBots } from "../constants/botclients";
 const SEND_CHANNEL = "1305712138106441788";
 
 const BOT_PORT = {
-    [MUSIC_BOT_1]: "3001",
-    [MUSIC_BOT_2]: "3002"
+  [MUSIC_BOT_1]: "3001",
+  [MUSIC_BOT_2]: "3002",
 };
 
 export async function sendToBot(
@@ -15,13 +15,12 @@ export async function sendToBot(
   command: string,
   data?: Record<string, string>
 ): Promise<string | null> {
-  const channel = interaction.guild?.channels.cache.get(SEND_CHANNEL);
-  if (!channel || !channel.isTextBased()) {
-    return null;
-  }
   const member = interaction.member;
+  console.log(member?.user.id);
   if (!member) return null;
   if (!member || !("voice" in member)) return null;
+
+  console.log("POSTING");
 
   const result = await fetch(`http://localhost:${BOT_PORT[botId]}/`, {
     method: "POST",
