@@ -21,7 +21,9 @@ export const unlockCommand = {
     ),
   async execute(interaction: CommandInteraction) {
     if (
-      !interaction.memberPermissions?.has(PermissionsBitField.Flags.BanMembers)
+      !interaction.memberPermissions?.has([
+        PermissionsBitField.Flags.Administrator,
+      ])
     ) {
       return interaction.reply({
         content: "You do not have permission to use this command.",
