@@ -6,6 +6,14 @@ export const pingCommand = {
     .setName("ping")
     .setDescription("Replies with Pong! (v1.02)"),
   async execute(interaction: CommandInteraction) {
-    await interaction.reply("Pong!");
+    const sent = await interaction.reply({
+      content: "Pinging...",
+      fetchReply: true,
+    });
+
+    const latency = sent.createdTimestamp - interaction.createdTimestamp;
+    const apiLatency = Math.round(interaction.client.ws.ping);
+
+    return `Latency: **${latency}ms**\nAPI Latency: **${apiLatency}ms**\n*v1.06*`;
   },
 };

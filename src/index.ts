@@ -13,6 +13,14 @@ import { pingCommand } from "./commands/ping";
 import { timeLeftCommand } from "./commands/timeleft";
 import { unlockCommand } from "./commands/unlock";
 import { lockInCommand } from "./commands/lockin";
+import playCommand from "./commands/play";
+import pauseCommand from "./commands/pause";
+import resumeCommand from "./commands/resume";
+import queueCommand from "./commands/queue";
+import stopCommand from "./commands/stop";
+import skipCommand from "./commands/skip";
+import djmodeCommand from "./commands/djmode";
+import { isInChannel } from "./utils/isInChannel";
 
 dotenv.config();
 
@@ -20,7 +28,27 @@ export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
 
-const commands = [lockInCommand, timeLeftCommand, pingCommand, unlockCommand];
+const musicBotCommands = [
+  djmodeCommand,
+  pauseCommand,
+  playCommand,
+  queueCommand,
+  resumeCommand,
+  skipCommand,
+  stopCommand,
+];
+
+const commands = [
+  lockInCommand,
+  timeLeftCommand,
+  pingCommand,
+  unlockCommand,
+  ...musicBotCommands,
+];
+
+function isMusicBotCommand(commandName: string): boolean {
+  return musicBotCommands.some((command) => command.data.name === commandName);
+}
 
 client.on("interactionCreate", async (interaction: Interaction) => {
   if (!interaction.isCommand()) return;
@@ -29,6 +57,16 @@ client.on("interactionCreate", async (interaction: Interaction) => {
 
   for (const command of commands) {
     if (command.data.name === commandName) {
+      if (isMusicBotCommand(command.data.name)) {
+        const inChannel = isInChannel(interaction);
+
+        if (!inChannel) {
+          return interaction.editReply(
+            "You need to be in a voice channel to play music!"
+          );
+        }
+      }
+
       await command.execute(interaction);
     }
   }
