@@ -24,7 +24,6 @@ const playCommand = {
     const query = interaction.options.get("query")?.value as string;
 
     const bot = await getBot(interaction);
-    console.log(bot);
     if (!bot) {
       return interaction.editReply({
         content: "No bots available",
@@ -43,7 +42,7 @@ const playCommand = {
 
     const voiceChannelId = member.voice.channel.id;
 
-    console.log(member, guild, voiceChannelId);
+    console.log(voiceChannelId);
 
     const result = await sendToBot(interaction, bot, "play", {
       query,

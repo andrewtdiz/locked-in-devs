@@ -14,7 +14,7 @@ export async function getAvailableBot(
         channel.type === ChannelType.GuildVoice &&
         channel.members.has(botClientId)
     );
-    console.log(botClientId, botIsInSomeVC);
+    
     if (!botIsInSomeVC) {
       return botClientId;
     }
