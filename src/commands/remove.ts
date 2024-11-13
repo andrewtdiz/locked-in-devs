@@ -13,7 +13,7 @@ const removeCommand = {
     .addStringOption((option) =>
       option
         .setName("index")
-        .setDescription("The index to remove from the queue (index at 0)")
+        .setDescription("The index to remove from the queue (index at 1)")
         .setRequired(true)
     ),
 
