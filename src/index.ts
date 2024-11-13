@@ -21,6 +21,7 @@ import stopCommand from "./commands/stop";
 import skipCommand from "./commands/skip";
 import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
+import removeCommand from "./commands/remove";
 import { isInChannel } from "./utils/isInChannel";
 
 dotenv.config();
@@ -34,6 +35,7 @@ const musicBotCommands = [
   pauseCommand,
   playCommand,
   loopCommand,
+  removeCommand,
   queueCommand,
   resumeCommand,
   skipCommand,
