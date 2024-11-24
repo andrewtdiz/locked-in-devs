@@ -16,7 +16,7 @@ import pauseCommand from "./commands/pause";
 import resumeCommand from "./commands/resume";
 import queueCommand from "./commands/queue";
 import stopCommand from "./commands/stop";
-import timeLeftCommand from "./commands/timeLeft";
+import timeLeftCommand from "./commands/timeleft";
 import skipCommand from "./commands/skip";
 import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
