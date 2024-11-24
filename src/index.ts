@@ -123,6 +123,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   const hasStoppedStreaming = oldState.streaming && !newState.streaming;
   const hasLeftVC = oldState.channelId && !newState.channelId;
   const hasMuteRole = member.roles.cache.has(Config.muteRoleId);
+  const hasJoinedVC = !oldState.channelId && newState.channelId;
 
   if (hasMuteRole) {
     const shouldBeMuted = Boolean(isInLockedVC);
@@ -178,5 +179,14 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       clearTimeout(timeout.timer);
       timeouts.delete(userId);
     }
+  } else if (hasJoinedVC) {
+    const timeout = timeouts.get(userId);
+    if (timeout || !newState.serverMute) return;
+
+    const channel = member.voice.channel;
+    if (!channel) return;
+
+    member.voice?.setMute(false);
+    await channel.send(`${member.user.displayName} has been unmuted.`);
   }
 });
