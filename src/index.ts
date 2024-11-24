@@ -24,6 +24,7 @@ import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
 import removeCommand from "./commands/remove";
 import { isInChannel } from "./utils/isInChannel";
+import mutedDuration from "./constants/mutedDuration";
 
 dotenv.config();
 
@@ -136,8 +137,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       cancelTimer(userId);
     }
   } else if (hasBeenMuted) {
-    const waitDuration = 60 * 1 * 1000;
-    console.log(userId, "has been Muted");
+    const waitDuration = 60 * mutedDuration * 1000;
 
     const timeout = timeouts.get(userId);
     if (timeout) {
@@ -148,14 +148,15 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     const channel = member.voice.channel;
     if (channel) {
       await channel.send(
-        `<@${member.id}> has been muted for 1 minute.\nUnmuting <t:${Math.floor(
+        `<@${
+          member.id
+        }> has been muted for ${mutedDuration} minutes.\nUnmuting <t:${Math.floor(
           (Date.now() + waitDuration) / 1000
         )}:R>`
       );
     }
 
     const createdTimeout = setTimeout(() => {
-      console.log(userId, "is being Unmuted");
       if (!member.voice.channelId) return;
       member.voice?.setMute(false);
       timeouts.delete(userId);
