@@ -18,6 +18,7 @@ import pauseCommand from "./commands/pause";
 import resumeCommand from "./commands/resume";
 import queueCommand from "./commands/queue";
 import stopCommand from "./commands/stop";
+import mutedCommand from "./commands/muted";
 import skipCommand from "./commands/skip";
 import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
@@ -34,6 +35,7 @@ const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
   playCommand,
+  // mutedCommand,
   loopCommand,
   removeCommand,
   queueCommand,
@@ -43,10 +45,10 @@ const musicBotCommands = [
 ];
 
 const commands = [
-  lockInCommand,
-  timeLeftCommand,
+  // lockInCommand,
+  // timeLeftCommand,
   pingCommand,
-  unlockCommand,
+  // unlockCommand,
   ...musicBotCommands,
 ];
 
@@ -101,10 +103,15 @@ client.once("ready", () => {
   console.log("Bot is online!");
 });
 
+export const timeouts = new Map<string, { timer: Timer; timestamp: number }>();
+
 client.on("voiceStateUpdate", async (oldState, newState) => {
   const member = newState.member as GuildMember;
   const userId = member.id;
   const isMuted = member.voice.mute;
+
+  const hasBeenMuted = !oldState.serverMute && newState.serverMute;
+  const hasBeenUnmuted = oldState.serverMute && !newState.serverMute;
 
   if (!member || !newState.guild) return;
 
@@ -127,6 +134,42 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     if (hasStoppedStreaming || hasLeftVC) {
       cancelTimer(userId);
+    }
+  } else if (hasBeenMuted) {
+    const waitDuration = 60 * 1 * 1000;
+    console.log(userId, "has been Muted");
+
+    const timeout = timeouts.get(userId);
+    if (timeout) {
+      clearTimeout(timeout.timer);
+      timeouts.delete(userId);
+    }
+
+    const channel = member.voice.channel;
+    if (channel) {
+      await channel.send(
+        `<@${member.id}> has been muted for 1 minute.\nUnmuting <t:${Math.floor(
+          (Date.now() + waitDuration) / 1000
+        )}:R>`
+      );
+    }
+
+    const createdTimeout = setTimeout(() => {
+      console.log(userId, "is being Unmuted");
+      if (!member.voice.channelId) return;
+      member.voice?.setMute(false);
+      timeouts.delete(userId);
+    }, waitDuration);
+
+    timeouts.set(userId, {
+      timer: createdTimeout,
+      timestamp: Date.now() + waitDuration,
+    });
+  } else if (hasBeenUnmuted) {
+    const timeout = timeouts.get(userId);
+    if (timeout) {
+      clearTimeout(timeout.timer);
+      timeouts.delete(userId);
     }
   }
 });
