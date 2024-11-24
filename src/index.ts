@@ -178,6 +178,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   } else if (hasBeenUnmuted) {
     const timeout = timeouts.get(userId);
     if (timeout) {
+      timeout.message?.edit(`${member.user.displayName} has been unmuted.`);
       timeouts.delete(userId);
       clearTimeout(timeout.timer);
     }
