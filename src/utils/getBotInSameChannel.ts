@@ -16,9 +16,7 @@ export function getBotInSameChannel(
   const userVoiceChannelId = userVoiceState.channelId;
   if (!userVoiceChannelId) return null;
 
-  for (const botClient of botclients) {
-    const { APP_ID: botAppId } = botClient;
-
+  for (const botAppId of botclients) {
     const botIsInClientVC = interaction.guild.channels.cache.some(
       (channel) =>
         channel.id === userVoiceChannelId &&
@@ -27,7 +25,7 @@ export function getBotInSameChannel(
     );
 
     if (botIsInClientVC) {
-      return botClient;
+      return botAppId;
     }
   }
 

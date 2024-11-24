@@ -10,15 +10,14 @@ export async function getAvailableBot(
 
   console.log("getAvailableBot...");
 
-  for (const botIds of botclients) {
-    const { APP_ID: botAppId } = botIds;
+  for (const botAppId of botclients) {
     const botIsInSomeVC = interaction.guild.channels.cache.some(
       (channel) =>
         channel.type === ChannelType.GuildVoice && channel.members.has(botAppId)
     );
 
     if (!botIsInSomeVC) {
-      return botIds;
+      return botAppId;
     }
   }
 
