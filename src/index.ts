@@ -2,6 +2,7 @@ import {
   Client,
   GatewayIntentBits,
   GuildMember,
+  Message,
   type Interaction,
 } from "discord.js";
 import { REST } from "@discordjs/rest";
@@ -146,8 +147,9 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
 
     const channel = member.voice.channel;
+    let sentMessage: Message | null = null;
     if (channel) {
-      await channel.send(
+      sentMessage = await channel.send(
         `<@${
           member.id
         }> has been muted for ${mutedDuration} minutes.\nUnmuting <t:${Math.floor(
@@ -160,6 +162,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       if (!member.voice.channelId) return;
       member.voice?.setMute(false);
       timeouts.delete(userId);
+
+      if (sentMessage) {
+        sentMessage.edit(`${member.user.displayName} has been unmuted.`);
+      }
     }, waitDuration);
 
     timeouts.set(userId, {
