@@ -8,10 +8,14 @@ export async function getAvailableBot(
   const guild = interaction.guild;
   if (!guild) return null;
 
+  console.log("getAvailableBot...");
+
   for (const botClientId of botclients) {
     const botMember = interaction.guild.members.cache.get(botClientId);
     const botIsInSomeVC = botMember?.voice.channel !== null;
-    
+
+    console.log(botClientId, botIsInSomeVC);
+
     if (!botIsInSomeVC) {
       return botClientId;
     }
