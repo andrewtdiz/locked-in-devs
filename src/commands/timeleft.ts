@@ -4,7 +4,7 @@ import { timeouts } from "..";
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("timeLeft")
+    .setName("timeleft")
     .setDescription("If you're muted, get the remaining duration."),
   async execute(interaction: CommandInteraction) {
     const timeout = timeouts.get(interaction.user.id);

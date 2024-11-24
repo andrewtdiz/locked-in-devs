@@ -4,7 +4,7 @@ import { getRemainingTime } from "../utils/LockinTimer";
 
 export const timeLeftCommand = {
   data: new SlashCommandBuilder()
-    .setName("timeleft")
+    .setName("timeleftYapper")
     .setDescription("Check how much time is left for a user to be unmuted.")
     .addUserOption((option) =>
       option
