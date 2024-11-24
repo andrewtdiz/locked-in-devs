@@ -105,7 +105,11 @@ client.once("ready", () => {
   console.log("Bot is online!");
 });
 
-export const timeouts = new Map<string, { timer: Timer; timestamp: number }>();
+export const timeouts = new Map<
+  string,
+  { timer: Timer; timestamp: number; message?: Message }
+>();
+const remainingTimeouts = new Map<string, number>();
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   const member = newState.member as GuildMember;
@@ -121,9 +125,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     newState.channelId && Config.lockedVCIds.includes(newState.channelId);
   const hasStartedStreaming = !oldState.streaming && newState.streaming;
   const hasStoppedStreaming = oldState.streaming && !newState.streaming;
-  const hasLeftVC = oldState.channelId && !newState.channelId;
   const hasMuteRole = member.roles.cache.has(Config.muteRoleId);
+
   const hasJoinedVC = !oldState.channelId && newState.channelId;
+  const hasLeftVC = oldState.channelId && !newState.channelId;
 
   if (hasMuteRole) {
     const shouldBeMuted = Boolean(isInLockedVC);
@@ -148,7 +153,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
 
     const channel = member.voice.channel;
-    let sentMessage: Message | null = null;
+    let sentMessage: Message | undefined = undefined;
     if (channel) {
       sentMessage = await channel.send(
         `<@${
@@ -160,9 +165,9 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
 
     const createdTimeout = setTimeout(() => {
+      timeouts.delete(userId);
       if (!member.voice.channelId) return;
       member.voice?.setMute(false);
-      timeouts.delete(userId);
 
       if (sentMessage) {
         sentMessage.edit(`${member.user.displayName} has been unmuted.`);
@@ -172,21 +177,59 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     timeouts.set(userId, {
       timer: createdTimeout,
       timestamp: Date.now() + waitDuration,
+      message: sentMessage,
     });
   } else if (hasBeenUnmuted) {
     const timeout = timeouts.get(userId);
     if (timeout) {
-      clearTimeout(timeout.timer);
       timeouts.delete(userId);
+      clearTimeout(timeout.timer);
     }
   } else if (hasJoinedVC) {
-    const timeout = timeouts.get(userId);
-    if (timeout || !newState.serverMute) return;
+    const remainingTimeout = remainingTimeouts.get(userId);
+    if (!remainingTimeout || !newState.serverMute) return;
 
     const channel = member.voice.channel;
     if (!channel) return;
 
-    member.voice?.setMute(false);
-    await channel.send(`${member.user.displayName} has been unmuted.`);
+    if (remainingTimeout) {
+      remainingTimeouts.delete(userId);
+
+      const channel = member.voice.channel;
+      let sentMessage: Message | undefined = undefined;
+      if (channel) {
+        sentMessage = await channel.send(
+          `<@${member.id}> is still muted.\nUnmuting <t:${Math.floor(
+            (Date.now() + remainingTimeout) / 1000
+          )}:R>`
+        );
+      }
+
+      const createdTimeout = setTimeout(() => {
+        timeouts.delete(userId);
+        if (!member.voice.channelId) return;
+        member.voice?.setMute(false);
+
+        sentMessage?.edit(`${member.user.displayName} has been unmuted.`);
+      }, remainingTimeout);
+
+      timeouts.set(userId, {
+        timer: createdTimeout,
+        timestamp: Date.now() + remainingTimeout,
+        message: sentMessage,
+      });
+    }
+  } else if (hasLeftVC) {
+    const timeout = timeouts.get(userId);
+    if (timeout) {
+      remainingTimeouts.set(userId, timeout.timestamp - Date.now());
+
+      timeout.message?.edit(
+        `${member.user.displayName} left the voice channel.`
+      );
+
+      timeouts.delete(userId);
+      clearTimeout(timeout.timer);
+    }
   }
 });
