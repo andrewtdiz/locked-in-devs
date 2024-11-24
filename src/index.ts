@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 import { Config } from "./config";
 import { cancelTimer, startTimer } from "./utils/LockinTimer";
 import { pingCommand } from "./commands/ping";
-import { timeLeftCommand } from "./commands/timeleft";
+import { timeLeftCommand } from "./commands/timeleftYapper";
 import { unlockCommand } from "./commands/unlock";
 import { lockInCommand } from "./commands/lockin";
 import playCommand from "./commands/play";
@@ -19,7 +19,6 @@ import pauseCommand from "./commands/pause";
 import resumeCommand from "./commands/resume";
 import queueCommand from "./commands/queue";
 import stopCommand from "./commands/stop";
-import mutedCommand from "./commands/muted";
 import skipCommand from "./commands/skip";
 import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
@@ -37,7 +36,7 @@ const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
   playCommand,
-  // mutedCommand,
+  timeLeftCommand,
   loopCommand,
   removeCommand,
   queueCommand,
@@ -48,7 +47,6 @@ const musicBotCommands = [
 
 const commands = [
   // lockInCommand,
-  // timeLeftCommand,
   pingCommand,
   // unlockCommand,
   ...musicBotCommands,

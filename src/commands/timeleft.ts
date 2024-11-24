@@ -1,51 +1,22 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember, Message } from "discord.js";
-import { getRemainingTime } from "../utils/LockinTimer";
+import { CommandInteraction } from "discord.js";
+import { timeouts } from "..";
 
-export const timeLeftCommand = {
+export default {
   data: new SlashCommandBuilder()
-    .setName("timeleft")
-    .setDescription("Check how much time is left for a user to be unmuted.")
-    .addUserOption((option) =>
-      option
-        .setName("user")
-        .setDescription("User to check time left")
-        .setRequired(true)
-    ),
-
+    .setName("timeLeft")
+    .setDescription("If you're muted, get the remaining duration."),
   async execute(interaction: CommandInteraction) {
-    const userOption = interaction.options.get("user", true)?.user;
-    const memberId = userOption?.id ?? null;
+    const timeout = timeouts.get(interaction.user.id);
 
-    const guild = interaction.guild;
-    if (!guild || !memberId) {
+    if (!timeout) {
       return interaction.reply({
-        content: "Invalid user or guild!",
-        ephemeral: true,
+        content: "You are not muted.",
       });
     }
 
-    const guildMember = (await guild.members.fetch(memberId)) as GuildMember;
-
-    const remainingTime = getRemainingTime(memberId);
-    if (remainingTime === null) {
-      return interaction.reply({
-        content: `${guildMember.user.tag} does not have an active mute timer.`,
-        ephemeral: true,
-      });
-    }
-
-    const endTime = Math.floor((Date.now() + remainingTime) / 1000);
-
-    // Send the reply with the relative timestamp
-    const reply = (await interaction.reply({
-      content: `${guildMember.user.tag} will be unmuted <t:${endTime}:R>.`,
-      ephemeral: true,
-      fetchReply: true,
-    })) as Message;
-
-    setTimeout(() => {
-      reply.delete().catch(console.error);
-    }, remainingTime);
+    await interaction.reply({
+      content: `<t:${Math.floor(timeout.timestamp / 1000)}:R>`,
+    });
   },
 };
