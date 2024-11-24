@@ -1,6 +1,6 @@
 import { CommandInteraction } from "discord.js";
 import { MUSIC_BOT_1, MUSIC_BOT_2 } from "../constants/bots";
-import type { MusicBots } from "../constants/botclients";
+import type { BotClient } from "../constants/botclients";
 
 const SEND_CHANNEL = "1305712138106441788";
 
@@ -11,7 +11,7 @@ const BOT_PORT = {
 
 export async function sendToBot(
   interaction: CommandInteraction,
-  botId: MusicBots,
+  botId: BotClient,
   command: string,
   data?: Record<string, string>
 ): Promise<string | null> {

@@ -1,23 +1,24 @@
 import { ChannelType, Client, CommandInteraction } from "discord.js";
-import botclients, { type MusicBots } from "../constants/botclients";
+import botclients, { type BotClient } from "../constants/botclients";
 import { client } from "..";
 
 export async function getAvailableBot(
   interaction: CommandInteraction
-): Promise<MusicBots | null> {
+): Promise<BotClient | null> {
   const guild = interaction.guild;
   if (!guild) return null;
 
   console.log("getAvailableBot...");
 
-  for (const botClientId of botclients) {
-    const botMember = interaction.guild.members.cache.get(botClientId);
-    const botIsInSomeVC = botMember?.voice.channel !== null;
-
-    console.log(botClientId, botIsInSomeVC);
+  for (const botIds of botclients) {
+    const { APP_ID: botAppId } = botIds;
+    const botIsInSomeVC = interaction.guild.channels.cache.some(
+      (channel) =>
+        channel.type === ChannelType.GuildVoice && channel.members.has(botAppId)
+    );
 
     if (!botIsInSomeVC) {
-      return botClientId;
+      return botIds;
     }
   }
 

@@ -1,10 +1,9 @@
-import { getVoiceConnection } from "@discordjs/voice";
 import { ChannelType, CommandInteraction } from "discord.js";
-import botclients, { type MusicBots } from "../constants/botclients";
+import botclients, { type BotClient } from "../constants/botclients";
 
 export function getBotInSameChannel(
   interaction: CommandInteraction
-): MusicBots | null {
+): BotClient | null {
   const guild = interaction.guild;
   if (!guild) return null;
 
@@ -17,17 +16,18 @@ export function getBotInSameChannel(
   const userVoiceChannelId = userVoiceState.channelId;
   if (!userVoiceChannelId) return null;
 
-  for (const botClientId of botclients) {
+  for (const botClient of botclients) {
+    const { APP_ID: botAppId } = botClient;
+
     const botIsInClientVC = interaction.guild.channels.cache.some(
       (channel) =>
         channel.id === userVoiceChannelId &&
         channel.type === ChannelType.GuildVoice &&
-        channel.members.has(botClientId) &&
-        channel.members.has(botClientId)
+        channel.members.has(botAppId)
     );
 
     if (botIsInClientVC) {
-      return botClientId;
+      return botClient;
     }
   }
 

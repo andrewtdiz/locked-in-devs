@@ -15,11 +15,12 @@ export const pingCommand = {
     const latency = sent.createdTimestamp - interaction.createdTimestamp;
     const apiLatency = Math.round(interaction.client.ws.ping);
 
+    console.log("Getting available bot...");
     const availableBot = await getAvailableBot(interaction);
 
     await interaction.editReply({
       content: `Latency: **${latency}ms**\nAPI Latency: **${apiLatency}ms**\nAvailable Bot: **${
-        availableBot || "None"
+        availableBot?.APP_ID || "None"
       }**\n*v1.07*`,
     });
   },
