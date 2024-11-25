@@ -104,9 +104,12 @@ client.once("ready", () => {
 
 export const timeouts = new Map<
   string,
-  { timer: Timer; timestamp: number; message?: Message }
+  { timer: Timer; timestamp: number; message?: Message; tts?: boolean }
 >();
-const remainingTimeouts = new Map<string, number>();
+const remainingTimeouts = new Map<
+  string,
+  { timeRemaining: number; tts?: boolean }
+>();
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   const member = newState.member as GuildMember;
@@ -183,16 +186,22 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       timer: createdTimeout,
       timestamp: Date.now() + waitDuration,
       message: sentMessage,
+      tts,
     });
   } else if (hasBeenUnmuted) {
     const timeout = timeouts.get(userId);
+    const tts = timeout?.tts;
     if (timeout) {
+      if (tts) {
+        member.roles.add(ttsRole);
+      }
       timeout.message?.edit(`${member.user.displayName} has been unmuted.`);
       timeouts.delete(userId);
       clearTimeout(timeout.timer);
     }
   } else if (hasJoinedVC) {
     const remainingTimeout = remainingTimeouts.get(userId);
+    const tts = remainingTimeout?.tts;
     if (!remainingTimeout || !newState.serverMute) return;
 
     const channel = member.voice.channel;
@@ -206,13 +215,9 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       if (channel) {
         sentMessage = await channel.send(
           `<@${member.id}> is still muted.\nUnmuting <t:${Math.floor(
-            (Date.now() + remainingTimeout) / 1000
+            (Date.now() + remainingTimeout.timeRemaining) / 1000
           )}:R>`
         );
-      }
-      const tts = member.roles.cache.has(ttsRole);
-      if (tts) {
-        member.roles.remove(ttsRole);
       }
 
       const createdTimeout = setTimeout(() => {
@@ -225,18 +230,23 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
         }
 
         sentMessage?.edit(`${member.user.displayName} has been unmuted.`);
-      }, remainingTimeout);
+      }, remainingTimeout.timeRemaining);
 
       timeouts.set(userId, {
         timer: createdTimeout,
-        timestamp: Date.now() + remainingTimeout,
+        timestamp: Date.now() + remainingTimeout.timeRemaining,
         message: sentMessage,
+        tts,
       });
     }
   } else if (hasLeftVC) {
     const timeout = timeouts.get(userId);
+    const tts = timeout?.tts;
     if (timeout) {
-      remainingTimeouts.set(userId, timeout.timestamp - Date.now());
+      remainingTimeouts.set(userId, {
+        timeRemaining: timeout.timestamp - Date.now(),
+        tts,
+      });
 
       timeout.message?.edit(
         `${member.user.displayName} left the voice channel.`
