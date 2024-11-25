@@ -23,6 +23,7 @@ import djmodeCommand from "./commands/djmode";
 import removeCommand from "./commands/remove";
 import { isInChannel } from "./utils/isInChannel";
 import mutedDuration from "./constants/mutedDuration";
+import ttsRole from "./constants/ttsRole";
 
 dotenv.config();
 
@@ -159,11 +160,19 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
         )}:R>`
       );
     }
+    const tts = member.roles.cache.has(ttsRole);
+    if (tts) {
+      member.roles.remove(ttsRole);
+    }
 
     const createdTimeout = setTimeout(() => {
       timeouts.delete(userId);
       if (!member.voice.channelId) return;
       member.voice?.setMute(false);
+
+      if (tts) {
+        member.roles.add(ttsRole);
+      }
 
       if (sentMessage) {
         sentMessage.edit(`${member.user.displayName} has been unmuted.`);
@@ -201,11 +210,19 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
           )}:R>`
         );
       }
+      const tts = member.roles.cache.has(ttsRole);
+      if (tts) {
+        member.roles.remove(ttsRole);
+      }
 
       const createdTimeout = setTimeout(() => {
         timeouts.delete(userId);
         if (!member.voice.channelId) return;
         member.voice?.setMute(false);
+
+        if (tts) {
+          member.roles.add(ttsRole);
+        }
 
         sentMessage?.edit(`${member.user.displayName} has been unmuted.`);
       }, remainingTimeout);
