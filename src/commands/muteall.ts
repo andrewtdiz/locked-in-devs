@@ -4,6 +4,7 @@ import {
   GuildMember,
   PermissionsBitField,
 } from "discord.js";
+import { setLockInModeStartedTimestamp } from "..";
 
 export default {
   data: new SlashCommandBuilder()
@@ -45,6 +46,8 @@ export default {
         ephemeral: true,
       });
     }
+
+    setLockInModeStartedTimestamp(Date.now() + 1000 * 60 * 5);
 
     if (voiceChannel) {
       const voiceMembers = voiceChannel.members;

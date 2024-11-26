@@ -112,6 +112,15 @@ const remainingTimeouts = new Map<
   string,
   { timeRemaining: number; tts?: boolean }
 >();
+export let lockInModeStartedTimestamp = 0;
+
+export function setLockInModeStartedTimestamp(timestamp: number) {
+  lockInModeStartedTimestamp = timestamp;
+
+  setTimeout(() => {
+    lockInModeStartedTimestamp = 0;
+  }, 1000 * 60 * 5);
+}
 
 client.on("voiceStateUpdate", async (oldState, newState) => {
   const member = newState.member as GuildMember;
@@ -146,7 +155,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       cancelTimer(userId);
     }
   } else if (hasBeenMuted) {
-    const waitDuration = 60 * mutedDuration * 1000;
+    const lockInModeTimeRemaining = lockInModeStartedTimestamp - Date.now();
+    const waitMinutes =
+      lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
+    const waitDuration = 60 * waitMinutes * 1000;
 
     const timeout = timeouts.get(userId);
     if (timeout) {
@@ -203,44 +215,48 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
   } else if (hasJoinedVC) {
     const remainingTimeout = remainingTimeouts.get(userId);
+    const isLockInMode = lockInModeStartedTimestamp > Date.now();
+    const lockInModeTimeRemaining = lockInModeStartedTimestamp - Date.now();
     const tts = remainingTimeout?.tts;
-    if (!remainingTimeout || !newState.serverMute) return;
+    if (!remainingTimeout && !isLockInMode) return;
+
+    if (!newState.serverMute && isLockInMode) {
+      member.voice?.setMute(true);
+      return;
+    }
+
+    const timeRemaining =
+      remainingTimeout?.timeRemaining || lockInModeTimeRemaining;
 
     const channel = member.voice.channel;
     if (!channel) return;
 
-    if (remainingTimeout) {
-      remainingTimeouts.delete(userId);
+    remainingTimeouts.delete(userId);
 
-      const channel = member.voice.channel;
-      let sentMessage: Message | undefined = undefined;
-      if (channel) {
-        sentMessage = await channel.send(
-          `<@${member.id}> is still muted.\nUnmuting <t:${Math.floor(
-            (Date.now() + remainingTimeout.timeRemaining) / 1000
-          )}:R>`
-        );
+    let sentMessage = await channel.send(
+      `<@${member.id}> is still muted.\nUnmuting <t:${Math.floor(
+        (Date.now() + timeRemaining) / 1000
+      )}:R>`
+    );
+
+    const createdTimeout = setTimeout(() => {
+      timeouts.delete(userId);
+      if (!member.voice.channelId) return;
+      member.voice?.setMute(false);
+
+      if (tts) {
+        member.roles.add(ttsRole);
       }
 
-      const createdTimeout = setTimeout(() => {
-        timeouts.delete(userId);
-        if (!member.voice.channelId) return;
-        member.voice?.setMute(false);
+      sentMessage.edit(`${member.user.displayName} has been unmuted.`);
+    }, timeRemaining);
 
-        if (tts) {
-          member.roles.add(ttsRole);
-        }
-
-        sentMessage?.edit(`${member.user.displayName} has been unmuted.`);
-      }, remainingTimeout.timeRemaining);
-
-      timeouts.set(userId, {
-        timer: createdTimeout,
-        timestamp: Date.now() + remainingTimeout.timeRemaining,
-        message: sentMessage,
-        tts,
-      });
-    }
+    timeouts.set(userId, {
+      timer: createdTimeout,
+      timestamp: Date.now() + timeRemaining,
+      message: sentMessage,
+      tts,
+    });
   } else if (hasLeftVC) {
     const timeout = timeouts.get(userId);
     const tts = timeout?.tts;
