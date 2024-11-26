@@ -20,6 +20,7 @@ import timeLeftCommand from "./commands/timeleft";
 import skipCommand from "./commands/skip";
 import loopCommand from "./commands/loop";
 import djmodeCommand from "./commands/djmode";
+import muteAllCommand from "./commands/muteall";
 import removeCommand from "./commands/remove";
 import { isInChannel } from "./utils/isInChannel";
 import mutedDuration from "./constants/mutedDuration";
@@ -34,6 +35,7 @@ export const client = new Client({
 const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
+  muteAllCommand,
   playCommand,
   timeLeftCommand,
   loopCommand,
