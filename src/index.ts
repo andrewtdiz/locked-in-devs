@@ -131,6 +131,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   const hasBeenUnmuted = oldState.serverMute && !newState.serverMute;
 
   if (!member || !newState.guild) return;
+  if (member.user.bot) return;
 
   const isInLockedVC =
     newState.channelId && Config.lockedVCIds.includes(newState.channelId);
