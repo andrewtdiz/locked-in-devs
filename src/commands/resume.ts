@@ -16,7 +16,23 @@ export default {
       });
     }
 
-    const result = await sendToBot(interaction, bot, "resume");
+    const member = interaction.member;
+    const guild = interaction.guild;
+
+    if (!member || !("voice" in member) || !member.voice.channel || !guild) {
+      console.log("Invalid member.");
+      return interaction.editReply({
+        content: "Failed to Play. You are not in voice channel!",
+      });
+    }
+
+    const voiceChannelId = member.voice.channel.id;
+    const guildId = guild.id;
+
+    const result = await sendToBot(interaction, bot, "resume", {
+      voiceChannelId,
+      guildId,
+    });
 
     if (!result) {
       return interaction.editReply({
