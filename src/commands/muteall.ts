@@ -22,8 +22,7 @@ export default {
       });
     }
 
-    const userOption = interaction.options.get("user", true)?.user;
-    const memberId = userOption?.id ?? null;
+    const memberId = interaction.member?.user.id;
 
     const guild = interaction.guild;
     if (!guild || !memberId) {
