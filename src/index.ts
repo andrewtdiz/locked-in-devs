@@ -155,7 +155,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
       cancelTimer(userId);
     }
   } else if (hasBeenMuted) {
-    const lockInModeTimeRemaining = lockInModeStartedTimestamp - Date.now();
+    const lockInModeTimeRemaining =
+      (lockInModeStartedTimestamp - Date.now()) / 1000;
     const waitMinutes =
       lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
     const waitDuration = 60 * waitMinutes * 1000;
