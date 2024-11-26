@@ -156,7 +156,7 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     }
   } else if (hasBeenMuted) {
     const lockInModeTimeRemaining =
-      (lockInModeStartedTimestamp - Date.now()) / 1000;
+      (lockInModeStartedTimestamp - Date.now()) / (1000 * 60);
     const waitMinutes =
       lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
     const waitDuration = 60 * waitMinutes * 1000;
@@ -217,7 +217,8 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
   } else if (hasJoinedVC) {
     const remainingTimeout = remainingTimeouts.get(userId);
     const isLockInMode = lockInModeStartedTimestamp > Date.now();
-    const lockInModeTimeRemaining = lockInModeStartedTimestamp - Date.now();
+    const lockInModeTimeRemaining =
+      (lockInModeStartedTimestamp - Date.now()) / (1000 * 60);
     const tts = remainingTimeout?.tts;
     if (!remainingTimeout && !isLockInMode) return;
 
