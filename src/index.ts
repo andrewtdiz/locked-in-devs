@@ -172,11 +172,12 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
     const channel = member.voice.channel;
     let sentMessage: Message | undefined = undefined;
+    const roundedWaitMinutes = Math.round(waitMinutes);
     if (channel) {
       sentMessage = await channel.send(
         `<@${
           member.id
-        }> has been muted for ${mutedDuration} minutes.\nUnmuting <t:${Math.floor(
+        }> has been muted for ${roundedWaitMinutes} minutes.\nUnmuting <t:${Math.floor(
           (Date.now() + waitDuration) / 1000
         )}:R>`
       );
