@@ -25,6 +25,7 @@ import removeCommand from "./commands/remove";
 import { isInChannel } from "./utils/isInChannel";
 import mutedDuration from "./constants/mutedDuration";
 import ttsRole from "./constants/ttsRole";
+import jumpCommand from "./commands/jump";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
   muteAllCommand,
+  jumpCommand,
   playCommand,
   timeLeftCommand,
   loopCommand,
