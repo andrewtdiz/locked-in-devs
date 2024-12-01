@@ -26,6 +26,8 @@ import { isInChannel } from "./utils/isInChannel";
 import mutedDuration from "./constants/mutedDuration";
 import ttsRole from "./constants/ttsRole";
 import jumpCommand from "./commands/jump";
+import { lockInCommand } from "./commands/lockin";
+import { unlockCommand } from "./commands/unlock";
 
 dotenv.config();
 
@@ -49,9 +51,9 @@ const musicBotCommands = [
 ];
 
 const commands = [
-  // lockInCommand,
+  lockInCommand,
   pingCommand,
-  // unlockCommand,
+  unlockCommand,
   ...musicBotCommands,
 ];
 
