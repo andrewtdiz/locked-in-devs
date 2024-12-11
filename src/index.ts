@@ -3,14 +3,7 @@ import {
   GatewayIntentBits,
   GuildMember,
   Message,
-  ButtonBuilder,
-  ButtonStyle,
-  SlashCommandBuilder,
   type Interaction,
-  ActionRowBuilder,
-  ModalBuilder,
-  TextInputBuilder,
-  TextInputStyle,
 } from "discord.js";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
@@ -69,47 +62,6 @@ function isMusicBotCommand(commandName: string): boolean {
 }
 
 client.on("interactionCreate", async (interaction: Interaction) => {
-  if (interaction.isButton() && interaction.customId.startsWith("update_muted_time")) {
-    const buttonID = interaction.customId;
-    const userId = buttonID.split(":")[1];
-    const member = interaction.member as GuildMember;
-
-    const remainingTimeout = remainingTimeouts.get(userId);
-    if (!remainingTimeout) return;
-
-    const modal = new ModalBuilder()
-    .setCustomId('myModal')
-    .setTitle('My Modal');
-
-      const time = new TextInputBuilder()
-        .setCustomId('new_time')
-        .setLabel("New Time in Minutes e.g (5)")
-        .setStyle(TextInputStyle.Short);
-
-      const timeRow = new ActionRowBuilder<TextInputBuilder>().addComponents(time);
-
-      modal.addComponents(timeRow);
-
-      await interaction.showModal(modal);
-      const submitted = await interaction.awaitModalSubmit({
-        time: 60000,
-        filter: i => i.user.id === interaction.user.id
-      }).catch(error => {
-        console.log('No modal submit interaction was collected.');
-        return null;
-      });
-
-      if (submitted) {
-        const updatedTime = submitted.fields.getTextInputValue('new_time');
-        const updatedTimeInt = parseInt(updatedTime);
-        const newWaitDuration = 60 * updatedTimeInt * 1000;
-        remainingTimeouts.set(userId, {
-          timeRemaining: newWaitDuration,
-          tts: remainingTimeout.tts,
-        })
-        await submitted.reply(`Time updated to ${updatedTime} minutes`);
-      }
-  }
   if (!interaction.isCommand()) return;
 
   const { commandName } = interaction;
@@ -224,22 +176,13 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
     let sentMessage: Message | undefined = undefined;
     const roundedWaitMinutes = Math.round(waitMinutes);
     if (channel) {
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-          .setCustomId(`update_muted_time:${userId}`)
-          .setLabel("Update Time")
-          .setStyle(ButtonStyle.Secondary)
-            )
-
-            sentMessage = await channel.send({
-        content: `<@${
+      sentMessage = await channel.send(
+        `<@${
           member.id
         }> has been muted for ${roundedWaitMinutes} minutes.\nUnmuting <t:${Math.floor(
           (Date.now() + waitDuration) / 1000
-        )}:R>`,
-        components: [row.toJSON()]
-        });
-
+        )}:R>`
+      );
     }
     const tts = member.roles.cache.has(ttsRole);
     if (tts) {
