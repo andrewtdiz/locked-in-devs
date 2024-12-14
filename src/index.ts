@@ -28,6 +28,7 @@ import ttsRole from "./constants/ttsRole";
 import jumpCommand from "./commands/jump";
 import { lockInCommand } from "./commands/lockin";
 import { unlockCommand } from "./commands/unlock";
+import ttsCommand from "./commands/tts";
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ const musicBotCommands = [
 ];
 
 const commands = [
+  ttsCommand,
   lockInCommand,
   pingCommand,
   unlockCommand,
