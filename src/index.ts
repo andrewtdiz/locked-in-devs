@@ -29,6 +29,7 @@ import jumpCommand from "./commands/jump";
 import { lockInCommand } from "./commands/lockin";
 import { unlockCommand } from "./commands/unlock";
 import ttsCommand from "./commands/tts";
+import { randomCommand } from "./commands/random";
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ const musicBotCommands = [
 
 const commands = [
   ttsCommand,
+  randomCommand,
   // lockInCommand,
   pingCommand,
   // unlockCommand,
