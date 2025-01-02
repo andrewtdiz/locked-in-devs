@@ -15,7 +15,7 @@ export default {
     await interaction.reply({
       content: `Vanished ${
         LEFT_VERSIONS[Math.floor(Math.random() * LEFT_VERSIONS.length)]
-      } <t:${Math.floor(VANISHED_TIMESTAMP.getTime())}:R>\nBring him back :'(`,
+      } <t:${Math.floor(unixTimestamp)}:R>\nBring him back :'(`,
     });
   },
 };
