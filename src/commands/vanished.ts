@@ -29,7 +29,7 @@ export default {
     await interaction.reply({
       content: `Vanished ${
         LEFT_VERSIONS[Math.floor(Math.random() * LEFT_VERSIONS.length)]
-      } ${timestampDiff(timestamp1, timestamp2)}\n\nBring him back ${
+      } ${timestampDiff(timestamp1, timestamp2)} ago.\n\nBring him back ${
         EMOJIS[Math.floor(Math.random() * EMOJIS.length)]
       }`,
     });
