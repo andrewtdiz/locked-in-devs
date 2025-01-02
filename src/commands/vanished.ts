@@ -6,6 +6,7 @@ const VANISHED_TIMESTAMP = new Date("2024-11-19T10:34:00");
 const unixTimestamp = Math.floor(VANISHED_TIMESTAMP.getTime() / 1000);
 
 const LEFT_VERSIONS = ["dip doozied", "left", "vanished"];
+const EMOJIS = [":cry:", ":sob:", ":smiling_face_with_tear:"];
 
 export default {
   data: new SlashCommandBuilder()
@@ -15,7 +16,9 @@ export default {
     await interaction.reply({
       content: `Vanished ${
         LEFT_VERSIONS[Math.floor(Math.random() * LEFT_VERSIONS.length)]
-      } <t:${Math.floor(unixTimestamp)}:R>\nBring him back :'(`,
+      } <t:${Math.floor(unixTimestamp)}:R>\n\nBring him back ${
+        EMOJIS[Math.floor(Math.random() * EMOJIS.length)]
+      }`,
     });
   },
 };
