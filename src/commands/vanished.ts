@@ -15,7 +15,7 @@ function timestampDiff(timestamp1: number, timestamp2: number): string {
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-  return `${days} days, ${hours} hours, ${minutes} minutes`;
+  return `${days} days, ${hours} hours, and ${minutes} minutes`;
 }
 
 export default {
