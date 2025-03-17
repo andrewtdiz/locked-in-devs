@@ -23,9 +23,7 @@ export default {
     const timestamp2 = ANDREW_BIRTHDAY_TIMESTAMP.getTime();
 
     await interaction.reply({
-      content: `Andrew D's 30th birthday 👴 \n\n
-      
-      Is in ${timestampDiff(
+      content: `Andrew D's 30th birthday 👴 \n\nIs in ${timestampDiff(
         timestamp1,
         timestamp2
       )}! 🎂🎉`,
