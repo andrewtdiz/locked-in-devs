@@ -57,7 +57,7 @@ const musicBotCommands = [
 const commands = [
   ttsCommand,
   // vanishedCommand,
-  uncCommand,
+  // uncCommand,
   // lockInCommand,
   pingCommand,
   // unlockCommand,
