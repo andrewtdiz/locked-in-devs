@@ -7,11 +7,30 @@ const ANDREW_BIRTHDAY_TIMESTAMP = new Date("2025-06-16T00:00:00-06:00");
 function timestampDiff(timestamp1: number, timestamp2: number): string {
   const diff = Math.abs(timestamp1 - timestamp2);
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  // Calculate total days first
+  const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+  
+  // Convert to months, weeks, and remaining days
+  const months = Math.floor(totalDays / 30);
+  const remainingDaysAfterMonths = totalDays % 30;
+  const weeks = Math.floor(remainingDaysAfterMonths / 7);
+  const days = remainingDaysAfterMonths % 7;
 
-  return `${days} days, ${hours} hours, and ${minutes} minutes`;
+  // Build the string based on what values we have
+  let result = '';
+  if (months > 0) {
+    result += `${months} month${months !== 1 ? 's' : ''}`;
+  }
+  if (weeks > 0) {
+    result += result ? ', ' : '';
+    result += `${weeks} week${weeks !== 1 ? 's' : ''}`;
+  }
+  if (days > 0 || (months === 0 && weeks === 0)) {
+    result += result ? ', and ' : '';
+    result += `${days} day${days !== 1 ? 's' : ''}`;
+  }
+
+  return result;
 }
 
 export default {
