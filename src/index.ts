@@ -42,12 +42,10 @@ export const client = new Client({
 const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
-  vanishedCommand,
-  uncCommand,
   muteAllCommand,
   jumpCommand,
-  playCommand,
   timeLeftCommand,
+  playCommand,
   loopCommand,
   removeCommand,
   queueCommand,
@@ -58,6 +56,8 @@ const musicBotCommands = [
 
 const commands = [
   ttsCommand,
+  vanishedCommand,
+  uncCommand,
   // lockInCommand,
   pingCommand,
   // unlockCommand,
