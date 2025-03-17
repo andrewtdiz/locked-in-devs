@@ -16,14 +16,17 @@ function timestampDiff(timestamp1: number, timestamp2: number): string {
 
 export default {
   data: new SlashCommandBuilder()
-    .setName("birthday")
+    .setName("unc")
     .setDescription("How long until Andrew D's 30th birthday?"),
   async execute(interaction: CommandInteraction) {
     const timestamp1 = Date.now();
     const timestamp2 = ANDREW_BIRTHDAY_TIMESTAMP.getTime();
 
     await interaction.reply({
-      content: `Andrew D's 30th birthday is in ${timestampDiff(timestamp1, timestamp2)}! 🎂🎉`,
+      content: `Andrew D's 30th birthday is in ${timestampDiff(
+        timestamp1,
+        timestamp2
+      )}! 🎂🎉`,
     });
   },
 };
