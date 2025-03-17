@@ -31,6 +31,7 @@ import { unlockCommand } from "./commands/unlock";
 import ttsCommand from "./commands/tts";
 import { randomCommand } from "./commands/random";
 import vanishedCommand from "./commands/vanished";
+import uncCommand from "./commands/unc";
 
 dotenv.config();
 
@@ -42,6 +43,7 @@ const musicBotCommands = [
   djmodeCommand,
   pauseCommand,
   vanishedCommand,
+  uncCommand,
   muteAllCommand,
   jumpCommand,
   playCommand,
