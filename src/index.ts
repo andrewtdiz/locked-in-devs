@@ -58,9 +58,7 @@ const commands = [
   ttsCommand,
   // vanishedCommand,
   // uncCommand,
-  // lockInCommand,
   pingCommand,
-  // unlockCommand,
   ...musicBotCommands,
 ];
 
