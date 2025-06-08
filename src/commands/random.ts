@@ -4,7 +4,7 @@ import {
   GuildMember,
   PermissionsBitField,
 } from "discord.js";
-import { setLockInModeStartedTimestamp } from "..";
+import { setLockInModeStartedTimestamp } from "../state/muteState";
 
 export const randomCommand = {
   data: new SlashCommandBuilder()

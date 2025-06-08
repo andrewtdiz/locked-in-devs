@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { timeouts } from "..";
+import { timeouts } from "../state/muteState";
 
 export default {
   data: new SlashCommandBuilder()

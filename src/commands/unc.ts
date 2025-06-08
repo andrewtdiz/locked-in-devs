@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { timeouts } from "..";
+import { timeouts } from "../state/muteState";
 
 const ANDREW_BIRTHDAY_TIMESTAMP = new Date("2025-06-16T00:00:00-06:00");
 

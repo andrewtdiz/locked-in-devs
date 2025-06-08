@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { CommandInteraction } from "discord.js";
-import { timeouts } from "..";
+import { timeouts } from "../state/muteState";
 
 const VANISHED_TIMESTAMP = new Date("2024-11-19T10:34:00-06:00");
 
