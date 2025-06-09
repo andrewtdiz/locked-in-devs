@@ -51,8 +51,6 @@ const musicBotCommands = [
 
 const commands = [
   ttsCommand,
-  // vanishedCommand,
-  // uncCommand,
   pingCommand,
   ...musicBotCommands,
 ];
