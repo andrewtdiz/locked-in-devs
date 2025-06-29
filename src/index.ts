@@ -61,6 +61,49 @@ client.on(
   createInteractionHandler(commands, musicBotCommands)
 );
 
+const server = Bun.serve({
+  port: 4000,
+  async fetch(req) {
+    const url = new URL(req.url);
+
+    if (url.pathname === '/' && req.method === 'POST') {
+      try {
+        const body = await req.json();
+        const { command, query, voiceChannelId, guildId } = body;
+
+        console.log('Received command request:', {
+          command,
+          query,
+          voiceChannelId,
+          guildId
+        });
+
+        return new Response(JSON.stringify({
+          success: true,
+          message: 'Command received successfully',
+        }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200
+        });
+
+      } catch (error) {
+        console.error('Error parsing JSON body:', error);
+        return new Response(JSON.stringify({
+          success: false,
+          error: 'Invalid JSON body'
+        }), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 400
+        });
+      }
+    }
+
+    return new Response('Not Found', { status: 404 });
+  },
+});
+
+console.log(`Server running on http://localhost:${server.port}`);
+
 const rest = new REST({ version: "10" }).setToken(
   process.env.DISCORD_TOKEN as string
 );
