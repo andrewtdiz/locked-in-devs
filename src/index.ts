@@ -29,6 +29,34 @@ import { baseSendToBot } from "./utils/baseSendToBot";
 
 dotenv.config();
 
+// Response constants
+const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+const createErrorResponse = (error: string, status: number) =>
+  new Response(JSON.stringify({ success: false, error }), {
+    headers: JSON_HEADERS,
+    status
+  });
+
+const createSuccessResponse = (message: string, status: number = 200) =>
+  new Response(JSON.stringify({ success: true, message }), {
+    headers: JSON_HEADERS,
+    status
+  });
+
+const ERROR_RESPONSES = {
+  GUILD_NOT_FOUND: createErrorResponse('Guild not found', 400),
+  USER_NOT_FOUND: createErrorResponse('User not found in guild', 400),
+  USER_NOT_IN_VOICE: createErrorResponse('User is not in a voice channel', 400),
+  FAILED_TO_SEND: createErrorResponse('Failed to send to bot', 500),
+  INVALID_JSON: createErrorResponse('Invalid JSON body', 400),
+  NOT_FOUND: new Response('Not Found', { status: 404 })
+};
+
+const SUCCESS_RESPONSES = {
+  COMMAND_RECEIVED: createSuccessResponse('Command received successfully')
+};
+
 export const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates],
 });
@@ -81,37 +109,20 @@ const server = Bun.serve({
           const userId = query;
           const guild = client.guilds.cache.get(guildId);
           if (!guild) {
-            return new Response(JSON.stringify({
-              success: false,
-              error: 'Guild not found'
-            }), {
-              headers: { 'Content-Type': 'application/json' },
-              status: 400
-            });
+            return ERROR_RESPONSES.GUILD_NOT_FOUND;
           }
 
           const member = await guild.members.fetch(userId);
           if (!member) {
-            return new Response(JSON.stringify({
-              success: false,
-              error: 'User not found in guild'
-            }), {
-              headers: { 'Content-Type': 'application/json' },
-              status: 400
-            });
+            return ERROR_RESPONSES.USER_NOT_FOUND;
           }
 
           if (!member.voice.channel) {
-            return new Response(JSON.stringify({
-              success: false,
-              error: 'User is not in a voice channel'
-            }), {
-              headers: { 'Content-Type': 'application/json' },
-              status: 400
-            });
+            return ERROR_RESPONSES.USER_NOT_IN_VOICE;
           }
 
           await member.voice.setMute(command === 'mute');
+          return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
         const result = await baseSendToBot(command, {
@@ -121,35 +132,17 @@ const server = Bun.serve({
         });
 
         if (!result) {
-          return new Response(JSON.stringify({
-            success: false,
-            error: 'Failed to send to bot'
-          }), {
-            headers: { 'Content-Type': 'application/json' },
-            status: 500
-          });
+          return ERROR_RESPONSES.FAILED_TO_SEND;
         }
-        return new Response(JSON.stringify({
-          success: true,
-          message: 'Command received successfully',
-        }), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 200
-        });
+        return SUCCESS_RESPONSES.COMMAND_RECEIVED;
 
       } catch (error) {
         console.error('Error parsing JSON body:', error);
-        return new Response(JSON.stringify({
-          success: false,
-          error: 'Invalid JSON body'
-        }), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 400
-        });
+        return ERROR_RESPONSES.INVALID_JSON;
       }
     }
 
-    return new Response('Not Found', { status: 404 });
+    return ERROR_RESPONSES.NOT_FOUND;
   },
 });
 
