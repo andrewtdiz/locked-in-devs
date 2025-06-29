@@ -91,7 +91,6 @@ client.on(
 const server = Bun.serve({
   port: 4000,
   async fetch(req) {
-    console.log('Received request:', req.url, req.method);
     const url = new URL(req.url);
 
     if (url.pathname === '/' && req.method === 'POST') {
@@ -131,17 +130,14 @@ const server = Bun.serve({
           voiceChannelId,
           guildId,
         });
-        console.log('Result:', result);
 
         if (!result) {
           return ERROR_RESPONSES.FAILED_TO_SEND;
         }
 
         const guild = client.guilds.cache.get(guildId);
-        console.log('Guild:', guild);
         if (guild) {
           const channel = guild.channels.cache.get(voiceChannelId);
-          console.log('Channel:', channel);
           if (channel && channel.isVoiceBased()) {
             channel.send(result);
           }
