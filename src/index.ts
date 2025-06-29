@@ -136,9 +136,15 @@ const server = Bun.serve({
         if (!result) {
           return ERROR_RESPONSES.FAILED_TO_SEND;
         }
-        const channel = client.channels.cache.get(voiceChannelId);
-        if (channel && ('send' in channel)) {
-          channel.send(result);
+
+        const guild = client.guilds.cache.get(guildId);
+        console.log('Guild:', guild);
+        if (guild) {
+          const channel = guild.channels.cache.get(voiceChannelId);
+          console.log('Channel:', channel);
+          if (channel && channel.isVoiceBased()) {
+            channel.send(result);
+          }
         }
 
         return SUCCESS_RESPONSES.COMMAND_RECEIVED;
