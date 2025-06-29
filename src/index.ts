@@ -91,6 +91,7 @@ client.on(
 const server = Bun.serve({
   port: 4000,
   async fetch(req) {
+    console.log('Received request:', req.url, req.method);
     const url = new URL(req.url);
 
     if (url.pathname === '/' && req.method === 'POST') {
