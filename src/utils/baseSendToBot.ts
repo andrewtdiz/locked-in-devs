@@ -7,6 +7,7 @@ export async function baseSendToBot(
   command: string,
   data?: Record<string, string>,
 ): Promise<string | null> {
+  console.log(command, data);
   const result = await fetch(`http://localhost:3001/`, {
     method: "POST",
     headers: {
