@@ -18,8 +18,6 @@ import djmodeCommand from "./commands/djmode";
 import muteAllCommand from "./commands/muteall";
 import removeCommand from "./commands/remove";
 import jumpCommand from "./commands/jump";
-import { lockInCommand } from "./commands/lockin";
-import { unlockCommand } from "./commands/unlock";
 import ttsCommand from "./commands/tts";
 import { randomCommand } from "./commands/random";
 import vanishedCommand from "./commands/vanished";
@@ -27,6 +25,7 @@ import uncCommand from "./commands/unc";
 import { createInteractionHandler } from "./routes/interactionCreate";
 import { readyHandler } from "./routes/ready";
 import { handleVoiceStateUpdate } from "./routes/voiceStateUpdate";
+import { baseSendToBot } from "./utils/baseSendToBot";
 
 dotenv.config();
 
@@ -78,6 +77,58 @@ const server = Bun.serve({
           guildId
         });
 
+        if (command === 'mute' || command === 'unmute') {
+          const userId = query;
+          const guild = client.guilds.cache.get(guildId);
+          if (!guild) {
+            return new Response(JSON.stringify({
+              success: false,
+              error: 'Guild not found'
+            }), {
+              headers: { 'Content-Type': 'application/json' },
+              status: 400
+            });
+          }
+
+          const member = await guild.members.fetch(userId);
+          if (!member) {
+            return new Response(JSON.stringify({
+              success: false,
+              error: 'User not found in guild'
+            }), {
+              headers: { 'Content-Type': 'application/json' },
+              status: 400
+            });
+          }
+
+          if (!member.voice.channel) {
+            return new Response(JSON.stringify({
+              success: false,
+              error: 'User is not in a voice channel'
+            }), {
+              headers: { 'Content-Type': 'application/json' },
+              status: 400
+            });
+          }
+
+          await member.voice.setMute(command === 'mute');
+        }
+
+        const result = await baseSendToBot(command, {
+          query,
+          voiceChannelId,
+          guildId,
+        });
+
+        if (!result) {
+          return new Response(JSON.stringify({
+            success: false,
+            error: 'Failed to send to bot'
+          }), {
+            headers: { 'Content-Type': 'application/json' },
+            status: 500
+          });
+        }
         return new Response(JSON.stringify({
           success: true,
           message: 'Command received successfully',
