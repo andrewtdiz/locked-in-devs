@@ -4,17 +4,15 @@ import type { BotClient } from "../constants/botclients";
 
 
 export async function baseSendToBot(
-  command: string,
   data?: Record<string, string>,
 ): Promise<string | null> {
-  console.log(command, data);
+  console.log(data);
   const result = await fetch(`http://localhost:3001/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      command,
       ...data,
     }),
   });

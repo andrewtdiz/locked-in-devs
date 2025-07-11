@@ -26,6 +26,7 @@ import { createInteractionHandler } from "./routes/interactionCreate";
 import { readyHandler } from "./routes/ready";
 import { handleVoiceStateUpdate } from "./routes/voiceStateUpdate";
 import { baseSendToBot } from "./utils/baseSendToBot";
+import { createCodingTaskEmbed } from "./embeds/CodingTaskEmbed";
 
 dotenv.config();
 
@@ -97,6 +98,7 @@ const server = Bun.serve({
       try {
         const body = await req.json();
         const { command, query, voiceChannelId, guildId } = body;
+        const guild = client.guilds.cache.get(guildId);
 
         console.log('Received command request:', {
           command,
@@ -125,7 +127,23 @@ const server = Bun.serve({
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
-        const result = await baseSendToBot(command, {
+        if (command === 'create_task') {
+          const embed = createCodingTaskEmbed(body.codeMetadata);
+
+          if (!embed || !guild) {
+            return ERROR_RESPONSES.FAILED_TO_SEND;
+          }
+
+          const channel = guild.channels.cache.get(voiceChannelId);
+          if (channel && channel.isVoiceBased()) {
+            channel.send({ embeds: [embed] });
+          }
+
+          return SUCCESS_RESPONSES.COMMAND_RECEIVED;
+        }
+
+        const result = await baseSendToBot({
+          command,
           query,
           voiceChannelId,
           guildId,
@@ -135,7 +153,6 @@ const server = Bun.serve({
           return ERROR_RESPONSES.FAILED_TO_SEND;
         }
 
-        const guild = client.guilds.cache.get(guildId);
         if (guild) {
           const channel = guild.channels.cache.get(voiceChannelId);
           if (channel && channel.isVoiceBased()) {
