@@ -17,9 +17,9 @@ export function createCodingTaskEmbed(task: CodingTaskData): EmbedBuilder {
         .setAuthor({
             name: "New Coding Task Created!",
         })
-        .setTitle(`${task.task}`)
         .setDescription(
-            `**Selected Code:**\n\`\`\`tsx\n${task.selectedText.length > 150 ? task.selectedText.slice(0, 150) + '...' : task.selectedText}\n\`\`\``
+            `**Task:**\n${task.task}\n\n` +
+            `**Code:**\n\`\`\`tsx\n${task.selectedText.length > 150 ? task.selectedText.slice(0, 150) + '...' : task.selectedText}\n\`\`\``
         )
         .addFields(
             {
