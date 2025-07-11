@@ -98,20 +98,12 @@ const server = Bun.serve({
     if (url.pathname === '/' && req.method === 'POST') {
       try {
         const body = await req.json();
-        console.log(body);
         const { command, category, codeMetadata, query, voiceChannelId, guildId } = body;
         const guild = client.guilds.cache.get(guildId);
         if (!guild) {
           return ERROR_RESPONSES.GUILD_NOT_FOUND;
         }
 
-        console.log('Received command request:', {
-          command,
-          query,
-          voiceChannelId,
-          guildId
-        });
-        console.log(body);
 
         if (command === 'mute' || command === 'unmute') {
           const userId = query;
