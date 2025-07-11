@@ -97,7 +97,7 @@ const server = Bun.serve({
     if (url.pathname === '/' && req.method === 'POST') {
       try {
         const body = await req.json();
-        const { command, query, voiceChannelId, guildId } = body;
+        const { command, category, codeMetadata, query, voiceChannelId, guildId } = body;
         const guild = client.guilds.cache.get(guildId);
 
         console.log('Received command request:', {
@@ -129,7 +129,7 @@ const server = Bun.serve({
         }
 
         if (command === 'create_task') {
-          const embed = createCodingTaskEmbed(body.codeMetadata);
+          const embed = createCodingTaskEmbed(codeMetadata);
 
           if (!embed || !guild) {
             return ERROR_RESPONSES.FAILED_TO_SEND;
