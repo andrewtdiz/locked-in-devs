@@ -97,6 +97,7 @@ const server = Bun.serve({
     if (url.pathname === '/' && req.method === 'POST') {
       try {
         const body = await req.json();
+        console.log(body);
         const { command, category, codeMetadata, query, voiceChannelId, guildId } = body;
         const guild = client.guilds.cache.get(guildId);
 
@@ -128,7 +129,7 @@ const server = Bun.serve({
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
-        if (command === 'create_task') {
+        if (category === 'create_task') {
           const embed = createCodingTaskEmbed(codeMetadata);
 
           if (!embed || !guild) {
