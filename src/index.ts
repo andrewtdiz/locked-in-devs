@@ -102,6 +102,14 @@ const server = Bun.serve({
         const { command, category, codeMetadata, query, voiceChannelId, guildId } = body;
         const guild = client.guilds.cache.get(guildId);
 
+        if (!guild) {
+          return ERROR_RESPONSES.GUILD_NOT_FOUND;
+        }
+        const member = await guild.members.fetch(userId);
+        if (!member) {
+          return ERROR_RESPONSES.USER_NOT_FOUND;
+        }
+
         console.log('Received command request:', {
           command,
           query,
@@ -112,10 +120,6 @@ const server = Bun.serve({
 
         if (command === 'mute' || command === 'unmute') {
           const userId = query;
-          const guild = client.guilds.cache.get(guildId);
-          if (!guild) {
-            return ERROR_RESPONSES.GUILD_NOT_FOUND;
-          }
 
           const member = await guild.members.fetch(userId);
           if (!member) {
@@ -130,6 +134,20 @@ const server = Bun.serve({
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
+        if (command === 'create_task') {
+          if (!member.voice.channel) {
+            return ERROR_RESPONSES.USER_NOT_IN_VOICE;
+          }
+
+          const embed = createCodingTaskEmbed(codeMetadata);
+          const channel = guild.channels.cache.get(voiceChannelId);
+          if (channel && channel.isVoiceBased()) {
+            channel.send({ embeds: [embed] });
+          }
+
+          return SUCCESS_RESPONSES.COMMAND_RECEIVED;
+        }
+
         const result = await baseSendToBot({
           command,
           query,
@@ -141,11 +159,9 @@ const server = Bun.serve({
           return ERROR_RESPONSES.FAILED_TO_SEND;
         }
 
-        if (guild) {
-          const channel = guild.channels.cache.get(voiceChannelId);
-          if (channel && channel.isVoiceBased()) {
-            channel.send(result);
-          }
+        const channel = guild.channels.cache.get(voiceChannelId);
+        if (channel && channel.isVoiceBased()) {
+          channel.send(result);
         }
 
         return SUCCESS_RESPONSES.COMMAND_RECEIVED;
