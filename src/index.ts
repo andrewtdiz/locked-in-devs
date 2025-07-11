@@ -93,6 +93,7 @@ const server = Bun.serve({
   port: 4000,
   async fetch(req) {
     const url = new URL(req.url);
+    console.log(url);
 
     if (url.pathname === '/' && req.method === 'POST') {
       try {
@@ -126,21 +127,6 @@ const server = Bun.serve({
           }
 
           await member.voice.setMute(command === 'mute');
-          return SUCCESS_RESPONSES.COMMAND_RECEIVED;
-        }
-
-        if (category === 'create_task') {
-          const embed = createCodingTaskEmbed(codeMetadata);
-
-          if (!embed || !guild) {
-            return ERROR_RESPONSES.FAILED_TO_SEND;
-          }
-
-          const channel = guild.channels.cache.get(voiceChannelId);
-          if (channel && channel.isVoiceBased()) {
-            channel.send({ embeds: [embed] });
-          }
-
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
