@@ -1,6 +1,7 @@
 import { EmbedBuilder } from "discord.js";
 
 export interface CodingTaskData {
+    task: string; // Added task property
     selectedText: string;
     startLine: number;
     endLine: number;
@@ -16,16 +17,18 @@ export function createCodingTaskEmbed(task: CodingTaskData): EmbedBuilder {
         .setAuthor({
             name: "New Coding Task Created!",
         })
-        .setTitle(`Coding Task: ${task.relativePath}`)
-        .setDescription(
-            `**Selected Code:**\n\n\`\`\`tsx\n${task.selectedText}\n\`\`\``
-        )
+        .setTitle(`${task.relativePath}`)
         .addFields(
             {
-                name: "File",
-                value: task.relativePath,
+                name: "Task",
+                value: task.task,
                 inline: false,
-            },
+            }
+        )
+        .setDescription(
+            `**Selected Code:**\n\`\`\`tsx\n${task.selectedText}\n\`\`\``
+        )
+        .addFields(
             {
                 name: "Lines",
                 value: `${task.startLine} - ${task.endLine}`,
@@ -47,4 +50,4 @@ export function createCodingTaskEmbed(task: CodingTaskData): EmbedBuilder {
         .setTimestamp();
 
     return embed;
-} 
+}
