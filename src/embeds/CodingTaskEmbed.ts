@@ -26,7 +26,7 @@ export function createCodingTaskEmbed(task: CodingTaskData): EmbedBuilder {
             }
         )
         .setDescription(
-            `**Selected Code:**\n\`\`\`tsx\n${task.selectedText}\n\`\`\``
+            `**Selected Code:**\n\`\`\`tsx\n${task.selectedText.length > 150 ? task.selectedText.slice(0, 150) + '...' : task.selectedText}\n\`\`\``
         )
         .addFields(
             {
