@@ -105,7 +105,7 @@ const server = Bun.serve({
         if (!guild) {
           return ERROR_RESPONSES.GUILD_NOT_FOUND;
         }
-        const member = await guild.members.fetch(userId);
+        const member = await guild.members.fetch(query);
         if (!member) {
           return ERROR_RESPONSES.USER_NOT_FOUND;
         }
@@ -119,13 +119,6 @@ const server = Bun.serve({
         console.log(body);
 
         if (command === 'mute' || command === 'unmute') {
-          const userId = query;
-
-          const member = await guild.members.fetch(userId);
-          if (!member) {
-            return ERROR_RESPONSES.USER_NOT_FOUND;
-          }
-
           if (!member.voice.channel) {
             return ERROR_RESPONSES.USER_NOT_IN_VOICE;
           }
