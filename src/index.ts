@@ -106,6 +106,7 @@ const server = Bun.serve({
           voiceChannelId,
           guildId
         });
+        console.log(body);
 
         if (command === 'mute' || command === 'unmute') {
           const userId = query;
