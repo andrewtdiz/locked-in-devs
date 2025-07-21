@@ -103,7 +103,20 @@ const server = Bun.serve({
         if (!guild) {
           return ERROR_RESPONSES.GUILD_NOT_FOUND;
         }
-
+        if (command === 'mute_all') {
+          const channel = guild.channels.cache.get(voiceChannelId);
+          if (channel && channel.isVoiceBased()) {
+            const voiceMembers = channel.members;
+            for (const [_, member] of voiceMembers) {
+              if (member.user.bot) continue;
+              await member.voice.setMute(true);
+            }
+          } else {
+            return ERROR_RESPONSES.USER_NOT_IN_VOICE;
+          }
+          
+          return SUCCESS_RESPONSES.COMMAND_RECEIVED;
+        }
 
         if (command === 'mute' || command === 'unmute') {
           const userId = query;
