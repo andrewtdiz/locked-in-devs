@@ -114,27 +114,29 @@ const server = Bun.serve({
           } else {
             return ERROR_RESPONSES.USER_NOT_IN_VOICE;
           }
-          
+
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
         if (command === 'mute' || command === 'unmute') {
-          const userId = query;
-          const guild = client.guilds.cache.get(guildId);
-          if (!guild) {
-            return ERROR_RESPONSES.GUILD_NOT_FOUND;
-          }
+          console.log(body?.userIds);
+          for (const userId of body?.userIds) {
+            const guild = client.guilds.cache.get(guildId);
+            if (!guild) {
+              return ERROR_RESPONSES.GUILD_NOT_FOUND;
+            }
 
-          const member = await guild.members.fetch(userId);
-          if (!member) {
-            return ERROR_RESPONSES.USER_NOT_FOUND;
-          }
+            const member = await guild.members.fetch(userId);
+            if (!member) {
+              return ERROR_RESPONSES.USER_NOT_FOUND;
+            }
 
-          if (!member.voice.channel) {
-            return ERROR_RESPONSES.USER_NOT_IN_VOICE;
-          }
+            if (!member.voice.channel) {
+              return ERROR_RESPONSES.USER_NOT_IN_VOICE;
+            }
 
-          await member.voice.setMute(command === 'mute');
+            await member.voice.setMute(command === 'mute');
+          }
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
