@@ -98,7 +98,7 @@ const server = Bun.serve({
     if (url.pathname === '/' && req.method === 'POST') {
       try {
         const body = await req.json();
-        const { command, category, codeMetadata, query, voiceChannelId, guildId } = body;
+        const { command, query, userIds, voiceChannelId, guildId } = body;
         const guild = client.guilds.cache.get(guildId);
         if (!guild) {
           return ERROR_RESPONSES.GUILD_NOT_FOUND;
@@ -119,34 +119,43 @@ const server = Bun.serve({
         }
 
         if (command === 'mute' || command === 'unmute') {
-          console.log(body?.userIds);
-          for (const userId of body?.userIds) {
+          for (const userId of userIds) {
             const guild = client.guilds.cache.get(guildId);
             if (!guild) {
-              return ERROR_RESPONSES.GUILD_NOT_FOUND;
+              continue;
             }
 
             const member = await guild.members.fetch(userId);
             if (!member) {
-              return ERROR_RESPONSES.USER_NOT_FOUND;
+              continue;
             }
 
             if (!member.voice.channel) {
-              return ERROR_RESPONSES.USER_NOT_IN_VOICE;
+              continue;
             }
 
             await member.voice.setMute(command === 'mute');
           }
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
+        if (command === 'deafen' || command === 'undeafen') {
+          for (const userId of userIds) {
+            const guild = client.guilds.cache.get(guildId);
+            if (!guild) {
+              continue;
+            }
 
-        if (command === 'create_task') {
-          const embed = createCodingTaskEmbed(codeMetadata);
-          const channel = guild.channels.cache.get(voiceChannelId);
-          if (channel && channel.isVoiceBased()) {
-            channel.send({ embeds: [embed] });
+            const member = await guild.members.fetch(userId);
+            if (!member) {
+              continue;
+            }
+
+            if (!member.voice.channel) {
+              continue;
+            }
+
+            await member.voice.setDeaf(command === 'deafen');
           }
-
           return SUCCESS_RESPONSES.COMMAND_RECEIVED;
         }
 
