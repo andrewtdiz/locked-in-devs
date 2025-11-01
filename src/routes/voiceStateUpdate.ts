@@ -1,7 +1,6 @@
 import { GuildMember, Message, VoiceState } from "discord.js";
 import { Config } from "../config";
 import { cancelTimer, startTimer } from "../utils/LockinTimer";
-import mutedDuration from "../constants/mutedDuration";
 import ttsRole from "../constants/ttsRole";
 import {
   timeouts,
@@ -48,6 +47,7 @@ export async function handleVoiceStateUpdate(
   } else if (hasBeenMuted) {
     const lockInModeTimeRemaining =
       (lockInModeStartedTimestamp - Date.now()) / (1000 * 60);
+    const mutedDuration = Math.random() < 0.5 ? 6 : 7;
     const waitMinutes =
       lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
     const waitDuration = 60 * waitMinutes * 1000;
@@ -63,7 +63,9 @@ export async function handleVoiceStateUpdate(
     const roundedWaitMinutes = Math.round(waitMinutes);
     if (channel) {
       sentMessage = await channel.send(
-        `<@${member.id}> has been muted for ${roundedWaitMinutes} minutes.\nUnmuting <t:${Math.floor(
+        `<@${
+          member.id
+        }> has been muted for ${roundedWaitMinutes} minutes.\nUnmuting <t:${Math.floor(
           (Date.now() + waitDuration) / 1000
         )}:R>`
       );
