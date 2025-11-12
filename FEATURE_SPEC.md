@@ -4,6 +4,8 @@
 
 This document outlines the specifications for a new interactive music player feature for the Discord bot. The goal is to enhance the user experience by providing a visually appealing and interactive way to control music playback within a Discord channel. This will be achieved using Discord's Embeds and interactive Buttons.
 
+NOTE: You will not be able to execute any code. DO NOT execute code, just implement the specification.
+
 ## 2. Visual Design
 
 The music player will be presented as a Discord Embed message.

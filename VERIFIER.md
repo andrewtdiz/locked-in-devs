@@ -6,6 +6,8 @@ This document provides a checklist to verify the correct implementation of the I
 
 Please go through each item in the checklist below. Mark the checkbox for each item that is correctly implemented and functional. Provide details for any items that fail verification.
 
+NOTE: You will not be able to execute any code. DO NOT execute code, just verify the specification.
+
 ---
 
 ### 1. Embed Display
