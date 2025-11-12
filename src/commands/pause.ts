@@ -1,6 +1,7 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getBot } from "../utils/getBot";
 import { sendToBot } from "../utils/sendToBot";
+import { musicPlayerManager } from "../music/MusicPlayerManager";
 
 export default {
   data: new SlashCommandBuilder()
@@ -16,7 +17,22 @@ export default {
       });
     }
 
-    const result = await sendToBot(interaction, bot, "pause");
+    const member = interaction.member;
+    const guild = interaction.guild;
+
+    if (!member || !("voice" in member) || !member.voice.channel || !guild) {
+      return interaction.editReply({
+        content: "Failed to pause. You are not in a voice channel!",
+      });
+    }
+
+    const voiceChannelId = member.voice.channel.id;
+    const guildId = guild.id;
+
+    const result = await sendToBot(interaction, bot, "pause", {
+      voiceChannelId,
+      guildId,
+    });
 
     if (!result) {
       return interaction.editReply({
@@ -25,5 +41,6 @@ export default {
     }
 
     await interaction.editReply(result);
+    await musicPlayerManager.markPaused(guildId, voiceChannelId);
   },
 };
