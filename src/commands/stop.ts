@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import { getBot } from "../utils/getBot";
 import { sendToBot } from "../utils/sendToBot";
+import { musicPlayerManager } from "../music/MusicPlayerManager";
 
 const stopCommand = {
   data: new SlashCommandBuilder()
@@ -14,7 +15,6 @@ const stopCommand = {
   async execute(interaction: CommandInteraction<CacheType>) {
     await interaction.deferReply();
     const guild = interaction.guild;
-
     const bot = await getBot(interaction);
     if (!bot || !guild) {
       return interaction.editReply({
@@ -22,9 +22,19 @@ const stopCommand = {
       });
     }
 
-    const guildId = guild.id;
+    const member = interaction.member;
+    const voiceChannelId =
+      member && "voice" in member && member.voice.channel
+        ? member.voice.channel.id
+        : undefined;
 
-    const result = await sendToBot(interaction, bot, "stop", { guildId });
+    const guildId = guild.id;
+    const payload: Record<string, string> = { guildId };
+    if (voiceChannelId) {
+      payload.voiceChannelId = voiceChannelId;
+    }
+
+    const result = await sendToBot(interaction, bot, "stop", payload);
 
     if (!result) {
       return interaction.editReply({
@@ -33,6 +43,11 @@ const stopCommand = {
     }
 
     await interaction.editReply(result);
+    if (voiceChannelId) {
+      await musicPlayerManager.markStopped(guildId, voiceChannelId);
+    } else {
+      await musicPlayerManager.markStoppedByGuild(guildId);
+    }
   },
 };
 

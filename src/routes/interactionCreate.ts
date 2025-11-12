@@ -1,5 +1,6 @@
 import type { Interaction } from "discord.js";
 import { isInChannel } from "../utils/isInChannel";
+import { musicPlayerManager } from "../music/MusicPlayerManager";
 
 export function createInteractionHandler(
   commands: any[],
@@ -10,6 +11,13 @@ export function createInteractionHandler(
   }
 
   return async function handleInteraction(interaction: Interaction) {
+    if (interaction.isButton()) {
+      if (interaction.customId.startsWith("music-player")) {
+        await musicPlayerManager.handleButton(interaction);
+      }
+      return;
+    }
+
     if (!interaction.isCommand()) return;
 
     const { commandName } = interaction;

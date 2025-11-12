@@ -5,4 +5,5 @@ export const Config = {
   muteFromBotRoleId: "1294384424196116563",
   logChannelId: "1294438563882078250",
   adminRoleId: "1204604270490419262",
+  djRoleId: process.env.DJ_ROLE_ID ?? null,
 };
