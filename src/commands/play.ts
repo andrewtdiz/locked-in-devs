@@ -1,15 +1,10 @@
-import { randomUUID } from "crypto";
 import {
   SlashCommandBuilder,
   CommandInteraction,
   type CacheType,
 } from "discord.js";
 import { getBot } from "../utils/getBot";
-import { sendBotCommand } from "../utils/sendToBot";
-import { musicPlayerManager } from "../music/MusicPlayerManager";
-import type { TrackMetadata } from "../music/types";
-
-const DEFAULT_DURATION_MS = 3 * 60 * 1000;
+import { sendToBot } from "../utils/sendToBot";
 
 const playCommand = {
   data: new SlashCommandBuilder()
@@ -48,100 +43,21 @@ const playCommand = {
     const voiceChannelId = member.voice.channel.id;
     const guildId = guild.id;
 
-    const response = await sendBotCommand(bot, "play", {
+    const result = await sendToBot(interaction, bot, "play", {
       userId: member.id,
       query,
       voiceChannelId,
       guildId,
     });
 
-    if (!response) {
+    if (!result) {
       return interaction.editReply({
         content: "Failed to send to bot",
       });
     }
 
-    const content = response.result ?? "Added to the queue.";
-    await interaction.editReply({ content });
-
-    const metadata = buildTrackMetadata({
-      query,
-      responseTitle: response.track?.title,
-      responseArtist: response.track?.artist,
-      durationMs: response.track?.durationMs,
-      requesterId: member.id,
-      requesterDisplay: member.displayName ?? member.user.username,
-      voiceChannelId,
-      voiceChannelName: member.voice.channel?.name ?? "Voice Channel",
-      textChannelId: interaction.channelId,
-      guildId,
-    });
-
-    const enqueueResult = await musicPlayerManager.enqueueTrack(
-      interaction,
-      bot,
-      metadata
-    );
-
-    if (enqueueResult.queued && enqueueResult.position) {
-      await interaction.editReply({
-        content: `${content}\nPosition in queue: ${enqueueResult.position}`,
-      });
-    }
+    await interaction.editReply(result);
   },
 };
 
 export default playCommand;
-
-interface TrackMetadataArgs {
-  query: string;
-  responseTitle?: string;
-  responseArtist?: string;
-  durationMs?: number;
-  requesterId: string;
-  requesterDisplay: string;
-  voiceChannelId: string;
-  voiceChannelName: string;
-  textChannelId: string;
-  guildId: string;
-}
-
-function buildTrackMetadata(args: TrackMetadataArgs): TrackMetadata {
-  const { query, responseTitle, responseArtist } = args;
-  const parsed = parseSongInfo(responseTitle ?? query);
-
-  const title = responseTitle ?? parsed.title;
-  const artist = responseArtist ?? parsed.artist;
-
-  return {
-    id: randomUUID(),
-    title,
-    artist,
-    durationMs: args.durationMs ?? DEFAULT_DURATION_MS,
-    requestedById: args.requesterId,
-    requestedByDisplayName: args.requesterDisplay,
-    voiceChannelId: args.voiceChannelId,
-    voiceChannelName: args.voiceChannelName,
-    textChannelId: args.textChannelId,
-    guildId: args.guildId,
-  };
-}
-
-function parseSongInfo(input: string) {
-  const separators = [" - ", " – ", " — ", " — "];
-  for (const separator of separators) {
-    if (input.includes(separator)) {
-      const [title, ...rest] = input.split(separator);
-      const artist = rest.join(separator).trim();
-      return {
-        title: title.trim() || input.trim(),
-        artist: artist || "Unknown Artist",
-      };
-    }
-  }
-
-  return {
-    title: input.trim(),
-    artist: "Unknown Artist",
-  };
-}

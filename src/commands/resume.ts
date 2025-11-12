@@ -1,7 +1,6 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { getBot } from "../utils/getBot";
 import { sendToBot } from "../utils/sendToBot";
-import { musicPlayerManager } from "../music/MusicPlayerManager";
 
 export default {
   data: new SlashCommandBuilder()
@@ -42,6 +41,5 @@ export default {
     }
 
     await interaction.editReply(result);
-    await musicPlayerManager.markResumed(guildId, voiceChannelId);
   },
 };
