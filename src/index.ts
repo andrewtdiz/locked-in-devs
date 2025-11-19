@@ -27,6 +27,7 @@ import { readyHandler } from "./routes/ready";
 import { handleVoiceStateUpdate } from "./routes/voiceStateUpdate";
 import { baseSendToBot } from "./utils/baseSendToBot";
 import { createCodingTaskEmbed } from "./embeds/CodingTaskEmbed";
+import { muteDurationCache } from "./state/muteDurationCache";
 
 dotenv.config();
 
@@ -98,11 +99,20 @@ const server = Bun.serve({
     if (url.pathname === '/' && req.method === 'POST') {
       try {
         const body = await req.json();
-        const { command, query, userIds, voiceChannelId, guildId } = body;
+        const { command, query, userIds, voiceChannelId, guildId, duration } = body;
         const guild = client.guilds.cache.get(guildId);
         if (!guild) {
           return ERROR_RESPONSES.GUILD_NOT_FOUND;
         }
+
+        if (command === 'mute') {
+          if (duration && userIds && Array.isArray(userIds)) {
+            for (const userId of userIds) {
+              muteDurationCache.set(userId, duration ?? 5);
+            }
+          }
+        }
+
         if (command === 'mute_all') {
           const channel = guild.channels.cache.get(voiceChannelId);
           if (channel && channel.isVoiceBased()) {

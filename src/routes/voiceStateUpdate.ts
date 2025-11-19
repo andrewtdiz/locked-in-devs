@@ -7,6 +7,7 @@ import {
   remainingTimeouts,
   lockInModeStartedTimestamp,
 } from "../state/muteState";
+import { muteDurationCache } from "../state/muteDurationCache";
 
 export async function handleVoiceStateUpdate(
   oldState: VoiceState,
@@ -48,8 +49,15 @@ export async function handleVoiceStateUpdate(
     const lockInModeTimeRemaining =
       (lockInModeStartedTimestamp - Date.now()) / (1000 * 60);
     const mutedDuration = Math.random() < 0.5 ? 6 : 7;
-    const waitMinutes =
-      lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
+
+    const cachedDuration = muteDurationCache.get(userId);
+    let waitMinutes = lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
+    
+    if (cachedDuration !== undefined) {
+      waitMinutes = cachedDuration;
+      muteDurationCache.delete(userId);
+    }
+
     const waitDuration = 60 * waitMinutes * 1000;
 
     const timeout = timeouts.get(userId);
