@@ -52,9 +52,9 @@ export async function handleVoiceStateUpdate(
 
     const cachedDuration = muteDurationCache.get(userId);
     let waitMinutes = lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
-    
+
     if (cachedDuration !== undefined) {
-      waitMinutes = cachedDuration;
+      waitMinutes = cachedDuration / 60;
       muteDurationCache.delete(userId);
     }
 
@@ -71,8 +71,7 @@ export async function handleVoiceStateUpdate(
     const roundedWaitMinutes = Math.round(waitMinutes);
     if (channel) {
       sentMessage = await channel.send(
-        `<@${
-          member.id
+        `<@${member.id
         }> has been muted for ${roundedWaitMinutes} minutes.\nUnmuting <t:${Math.floor(
           (Date.now() + waitDuration) / 1000
         )}:R>`

@@ -108,7 +108,7 @@ const server = Bun.serve({
         if (command === 'mute') {
           if (duration && userIds && Array.isArray(userIds)) {
             for (const userId of userIds) {
-              muteDurationCache.set(userId, duration ?? 5);
+              muteDurationCache.set(userId, duration);
             }
           }
         }
