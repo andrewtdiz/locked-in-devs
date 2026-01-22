@@ -48,7 +48,7 @@ export async function handleVoiceStateUpdate(
   } else if (hasBeenMuted) {
     const lockInModeTimeRemaining =
       (lockInModeStartedTimestamp - Date.now()) / (1000 * 60);
-    const mutedDuration = Math.random() < 0.5 ? 6 : 7;
+    const mutedDuration = 5;
 
     const cachedDuration = muteDurationCache.get(userId);
     let waitMinutes = lockInModeTimeRemaining > 0 ? lockInModeTimeRemaining : mutedDuration;
