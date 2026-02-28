@@ -22,6 +22,8 @@ import ttsCommand from "./commands/tts";
 import { randomCommand } from "./commands/random";
 import vanishedCommand from "./commands/vanished";
 import uncCommand from "./commands/unc";
+import transcribeCommand from "./commands/transcribe";
+import doneCommand from "./commands/done";
 import { createInteractionHandler } from "./routes/interactionCreate";
 import { readyHandler } from "./routes/ready";
 import { handleVoiceStateUpdate } from "./routes/voiceStateUpdate";
@@ -82,6 +84,8 @@ const commands = [
   ttsCommand,
   pingCommand,
   uncCommand,
+  transcribeCommand,
+  doneCommand,
   ...musicBotCommands,
 ];
 
