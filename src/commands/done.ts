@@ -17,7 +17,7 @@ const doneCommand = {
       return;
     }
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     try {
       await stopTranscriptionSession({ reason: "done_command" });

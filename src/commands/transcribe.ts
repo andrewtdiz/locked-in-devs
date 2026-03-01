@@ -17,7 +17,7 @@ const transcribeCommand = {
       return;
     }
 
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     const guild = interaction.guild;
     const member = interaction.member;
