@@ -22,9 +22,6 @@ function getModalConfig(): ModalConfig {
   if (!key) throw new Error("Missing MODAL_KEY");
   if (!secret) throw new Error("Missing MODAL_SECRET");
 
-  if (!key.startsWith("ak-")) throw new Error("MODAL_KEY must be a Proxy Auth key (ak-...)");
-  if (!secret.startsWith("ws-")) throw new Error("MODAL_SECRET must be a Proxy Auth secret (ws-...)");
-
   return { baseUrl, key, secret };
 }
 
