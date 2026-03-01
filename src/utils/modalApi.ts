@@ -14,21 +14,16 @@ type ModalConfig = {
 };
 
 function getModalConfig(): ModalConfig {
-  const baseUrl = process.env.MODAL_BASE_URL;
-  const key = process.env.MODAL_KEY;
-  const secret = process.env.MODAL_SECRET;
+  const baseUrl = process.env.MODAL_BASE_URL?.trim();
+  const key = process.env.MODAL_KEY?.trim();
+  const secret = process.env.MODAL_SECRET?.trim();
 
-  if (!baseUrl) {
-    throw new Error("Missing MODAL_BASE_URL");
-  }
+  if (!baseUrl) throw new Error("Missing MODAL_BASE_URL");
+  if (!key) throw new Error("Missing MODAL_KEY");
+  if (!secret) throw new Error("Missing MODAL_SECRET");
 
-  if (!key) {
-    throw new Error("Missing MODAL_KEY");
-  }
-
-  if (!secret) {
-    throw new Error("Missing MODAL_SECRET");
-  }
+  if (!key.startsWith("wk-")) throw new Error("MODAL_KEY must be a Proxy Auth key (wk-...)");
+  if (!secret.startsWith("ws-")) throw new Error("MODAL_SECRET must be a Proxy Auth secret (ws-...)");
 
   return { baseUrl, key, secret };
 }
